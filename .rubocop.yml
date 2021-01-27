@@ -6,3 +6,6 @@ Style/Documentation:
 
 Style/RescueModifier:
   Enabled: false
+
+AllCops:
+  SuggestExtensions: false

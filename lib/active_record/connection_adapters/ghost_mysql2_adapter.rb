@@ -1,7 +1,7 @@
 require 'active_record/connection_adapters/mysql2_adapter'
 
-gem "mysql2", ">= 0.4.4", "< 0.6.0"
-require "mysql2"
+gem 'mysql2', '>= 0.4.4', '< 0.6.0'
+require 'mysql2'
 
 module ActiveRecord
   module ConnectionHandling
@@ -10,8 +10,8 @@ module ActiveRecord
       config = config.symbolize_keys
       config[:flags] ||= 0
 
-      if config[:flags].kind_of? Array
-        config[:flags].push "FOUND_ROWS".freeze
+      if config[:flags].is_a? Array
+        config[:flags].push 'FOUND_ROWS'.freeze
       else
         config[:flags] |= Mysql2::Client::FOUND_ROWS
       end
@@ -23,8 +23,8 @@ module ActiveRecord
       else
         ConnectionAdapters::Mysql2Adapter.new(client, logger, nil, config)
       end
-    rescue Mysql2::Error => error
-      if error.message.include?("Unknown database")
+    rescue Mysql2::Error => e
+      if e.message.include?('Unknown database')
         raise ActiveRecord::NoDatabaseError
       else
         raise
@@ -58,7 +58,7 @@ module ActiveRecord
 
       attr_reader :dry_run
 
-      ALTER_TABLE_REGEX = /\AALTER\s+TABLE\W*(?<table_name>\w+)\W*(?<query>.*)$/i
+      ALTER_TABLE_REGEX = /\AALTER\s+TABLE\W*(?<table_name>\w+)\W*(?<query>.*)$/i.freeze
 
       def parse_sql(sql)
         capture = sql.match(ALTER_TABLE_REGEX)
@@ -72,7 +72,7 @@ module ActiveRecord
       end
 
       def clean_query(query)
-        cleaned = query.gsub(/[^0-9a-z_\s\(\)\:\'\"\{\}]/i, '')
+        cleaned = query.gsub(/[^0-9a-z_\s():'"{}]/i, '')
         cleaned.gsub('"', '\"')
       end
 
@@ -96,8 +96,29 @@ module ActiveRecord
           /\Adelete\sfrom\s`schema_migrations`/i =~ sql
       end
 
+      def run_ghost(table, query)
+        ghost_command = build_ghost_command(table, query)
+
+        Open3.popen2e(*ghost_command) do |_stdin, stdout_stderr, wait_thread|
+          stdout_stderr.each_line do |line|
+            if ready_to_cutover?(line)
+              cutover_file = cutover_flag_file(table)
+              puts "Removing cutover file (#{cutover_file}) to continue migration"
+              File.delete(cutover_file) if File.exist? cutover_file
+            end
+            puts "[gh-ost]:\t#{line}"
+          end
+
+          unless wait_thread.value.success?
+            raise GhostExecutionError, "gh-ost migration failed. exit code: #{wait_thread.value.exitstatus}"
+          end
+        end
+
+        cooldown
+      end
+
       def build_ghost_command(table, query)
-        replica_server_id = rand(100000)
+        replica_server_id = rand(100_000)
 
         command = [
           'gh-ost',
@@ -123,7 +144,7 @@ module ActiveRecord
           "--assume-master-host=#{main_db_host}",
           "--postpone-cut-over-flag-file=#{cutover_flag_file(table)}",
           "--serve-socket-file=/tmp/ghost.#{migration_id(table)}.sock",
-          "--replica-server-id=#{replica_server_id}",
+          "--replica-server-id=#{replica_server_id}"
         ]
 
         command << "--password=#{migration_db_password}" unless migration_db_password.blank?
@@ -138,27 +159,6 @@ module ActiveRecord
         end
 
         command
-      end
-
-      def run_ghost(table, query)
-        ghost_command = build_ghost_command(table, query)
-
-        Open3.popen2e(*ghost_command) do |_stdin, stdout_stderr, wait_thread|
-          stdout_stderr.each_line do |line|
-            if ready_to_cutover?(line)
-              cutover_file = cutover_flag_file(table)
-              puts "Removing cutover file (#{cutover_file}) to continue migration"
-              File.delete(cutover_file) if File.exist? cutover_file
-            end
-            puts "[gh-ost]:\t#{line}"
-          end
-
-          unless wait_thread.value.success?
-            raise GhostExecutionError, "gh-ost migration failed. exit code: #{wait_thread.value.exitstatus}"
-          end
-        end
-
-        cooldown
       end
 
       def cooldown
