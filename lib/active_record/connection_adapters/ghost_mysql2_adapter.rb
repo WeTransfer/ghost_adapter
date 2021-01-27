@@ -107,7 +107,7 @@ module ActiveRecord
           '--max-lag-millis=3000',
           "--user=#{migration_db_user}",
           "--host=#{read_replica_db_url}",
-          "--database=#{database_name}",
+          "--database=#{db_name}",
           "--table=#{table}",
           '--dml-batch-size=1000',
           '--verbose',
@@ -192,13 +192,8 @@ module ActiveRecord
         "/tmp/ghost.postpone.#{migration_id(table)}.flag"
       end
   
-      def database_name
-        if Rails.env.development?
-          db_config = Rails.application.config.database_configuration['development']
-          db_config['database']
-        else
-          'live'
-        end
+      def db_name
+        ENV['DATABASE_NAME']
       end
   
       def main_db_host

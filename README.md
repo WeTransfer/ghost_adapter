@@ -1,10 +1,10 @@
 # Ghost Adapter
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ghost_adapter`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A tiny, configurable ActiveRecord adapter built for running [gh-ost](https://github.com/github/gh-ost) migrations. When not running migrations, it'll stay the heck out of the way.
 
 ## Installation
+
+First, you'll need to install `gh-ost`. You can find the latest release [here](https://github.com/github/gh-ost/releases/latest). Once you've got that installed, install the gem!
 
 Add this line to your application's Gemfile:
 
@@ -16,19 +16,39 @@ And then execute:
 
     $ bundle install
 
-Or install it yourself as:
-
-    $ gem install ghost_adapter
-
 ## Usage
 
-TODO: Write usage instructions here
+### Connect with ActiveRecord
 
-## Development
+Configure your ActiveRecord connection to use `ghost_mysql2` as the adapter in whichever environments you'd like to use `gh-ost`.
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+For a standard rails project, in `config/database.yml` set `adapter: ghost_mysql2`.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+### Configure the Environment
+
+The following environment variables are expected to be present:
+
+- `DATABASE_NAME` => the name of your application's database
+- `DATABASE_MAIN_HOST` => the host URL / IP of your main database (e.g. localhost)
+- `DATABASE_READ_REPLICA_HOST` => the host URL / IP of your read replica database (for development, same as main host)
+- `DATABASE_MIGRATION_USER` => database user with permissions to run migrations
+- `DATABASE_MIGRATION_PASSWORD` => password for database user with permissions to run migrations
+
+### Using the adapter
+
+Since most database activity isn't a migration, we default to identical behavior to the Mysql2Adapter. No need to be executing a bunch of extra logic per query when you're only getting any value for migrations.
+
+To enable the ghost adapter, simply set `GHOST_MIGRATION=1` in the environment where you're running the migration. Like this:
+
+```
+GHOST_MIGRATION=1 bundle exec rake db:migrate
+```
+
+If you want to do a dry run first (recommended), no problem! Like this:
+
+```
+GHOST_MIGRATION=1 DRY_RUN=1 bundle exec rake db:migrate
+```
 
 ## Contributing
 
