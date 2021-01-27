@@ -158,7 +158,7 @@ module ActiveRecord
           end
 
           unless wait_thread.value.success?
-            raise GhostExecutionError.new("gh-ost migration failed. exit code: #{wait_thread.value.exitstatus}")
+            raise GhostExecutionError, "gh-ost migration failed. exit code: #{wait_thread.value.exitstatus}"
           end
         end
 
