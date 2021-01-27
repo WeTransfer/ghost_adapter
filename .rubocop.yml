@@ -7,5 +7,19 @@ Style/Documentation:
 Style/RescueModifier:
   Enabled: false
 
+Metrics/MethodLength:
+  IgnoredMethods:
+    - run_ghost
+    - build_ghost_command
+    - ghost_mysql2_connection
+
+Metrics/AbcSize:
+  IgnoredMethods:
+    - run_ghost
+    - build_ghost_command
+    - ghost_mysql2_connection
+
 AllCops:
   SuggestExtensions: false
+  TargetRubyVersion: 2.5
+  NewCops: enable
