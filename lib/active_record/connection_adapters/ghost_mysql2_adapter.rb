@@ -148,7 +148,7 @@ module ActiveRecord
             if ready_to_cutover?(line)
               cutover_file = cutover_flag_file(table)
               puts "Removing cutover file (#{cutover_file}) to continue migration"
-              File.delete(cutover_file) if File.exists? cutover_file
+              File.delete(cutover_file) if File.exist? cutover_file
             end
             puts "[gh-ost]:\t#{line}"
           end
