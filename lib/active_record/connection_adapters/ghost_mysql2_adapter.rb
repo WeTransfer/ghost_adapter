@@ -126,13 +126,9 @@ module ActiveRecord
           "--replica-server-id=#{replica_server_id}",
         ]
 
-        unless migration_db_password.blank?
-          command << "--password=#{migration_db_password}"
-        end
+        command << "--password=#{migration_db_password}" unless migration_db_password.blank?
 
-        if Rails.env.development?
-          command << '--allow-on-master'
-        end
+        command << '--allow-on-master' if Rails.env.development?
 
         unless dry_run
           command << '--initially-drop-ghost-table'
