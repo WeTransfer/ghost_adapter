@@ -7,7 +7,9 @@ module GhostAdapter
     @@config
   end
 
-  def self.configure(options = {})
+  def self.setup(options = {})
     @@config = GhostAdapter::Config.new(options) # rubocop:disable Style/ClassVars
+
+    yield @@config if block_given?
   end
 end
