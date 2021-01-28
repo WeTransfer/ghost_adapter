@@ -5,7 +5,7 @@ require 'ghost_adapter/railtie' if defined? ::Rails::Railtie
 
 module GhostAdapter
   def self.config
-    @@config
+    @@config ||= GhostAdapter::Config.new # rubocop:disable Style/ClassVars
   end
 
   def self.setup(options = {})
