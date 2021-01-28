@@ -1,4 +1,4 @@
-require 'ghost_adapter/env_config'
+require 'ghost_adapter/env_parser'
 
 module GhostAdapter
   CONFIG_KEYS = %i[aliyun_rds
@@ -79,9 +79,10 @@ module GhostAdapter
                    user
                    verbose].freeze
   Config = Struct.new(*CONFIG_KEYS, keyword_init: true) do
-    def initialize(_options = {})
-      super
-      EnvConfig.read { |k, v| self[k] = v }
+    def initialize(options = {})
+      env_config = EnvParser.new(ENV).config
+      config_options = options.merge(env_config)
+      super(config_options)
     end
 
     def compact
