@@ -1,6 +1,6 @@
 # Ghost Adapter
 
-A tiny, configurable ActiveRecord adapter built for running [gh-ost](https://github.com/github/gh-ost) migrations. When not running migrations, it'll stay the heck out of the way.
+A tiny, _very configurable_ ActiveRecord adapter built for running [gh-ost](https://github.com/github/gh-ost) migrations. When not running migrations, it'll stay the heck out of the way.
 
 ## Installation
 
@@ -26,13 +26,7 @@ For a standard rails project, in `config/database.yml` set `adapter: ghost_mysql
 
 ### Configure the Environment
 
-The following environment variables are expected to be present:
-
-- `DATABASE_NAME` => the name of your application's database
-- `DATABASE_MAIN_HOST` => the host URL / IP of your main database (e.g. localhost)
-- `DATABASE_READ_REPLICA_HOST` => the host URL / IP of your read replica database (for development, same as main host)
-- `DATABASE_MIGRATION_USER` => database user with permissions to run migrations
-- `DATABASE_MIGRATION_PASSWORD` => password for database user with permissions to run migrations
+TODO
 
 ### Using the adapter
 
@@ -41,13 +35,13 @@ Since most database activity isn't a migration, we default to identical behavior
 To enable the ghost adapter, simply set `GHOST_MIGRATION=1` in the environment where you're running the migration. Like this:
 
 ```
-GHOST_MIGRATION=1 bundle exec rake db:migrate
+MIGRATE_WITH_GHOST=1 bundle exec rake db:migrate
 ```
 
 If you want to do a dry run first (recommended), no problem! Like this:
 
 ```
-GHOST_MIGRATION=1 DRY_RUN=1 bundle exec rake db:migrate
+MIGRATE_WITH_GHOST=1 DRY_RUN=1 bundle exec rake db:migrate
 ```
 
 ## Contributing
