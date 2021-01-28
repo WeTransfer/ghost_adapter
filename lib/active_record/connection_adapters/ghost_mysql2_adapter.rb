@@ -1,4 +1,5 @@
 require 'active_record/connection_adapters/mysql2_adapter'
+require 'ghost_adapter/migrator'
 
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 require 'mysql2'
@@ -17,7 +18,7 @@ module ActiveRecord
       end
 
       client = Mysql2::Client.new(config)
-      if ENV['GHOST_MIGRATION'] == '1'
+      if ENV['MIGRATE_WITH_GHOST'] == '1'
         dry_run = ENV['DRY_RUN'] == '1'
         ConnectionAdapters::GhostMysql2Adapter.new(client, logger, nil, config, dry_run: dry_run)
       else
@@ -46,7 +47,7 @@ module ActiveRecord
         return if dry_run && should_skip_for_dry_run?(sql)
 
         if (table, query = parse_sql(sql))
-          run_ghost(table, query)
+          GhostAdapter::Migrator.new(table, query, dry_run).start
         else
           super(sql, name)
         end
@@ -56,10 +57,15 @@ module ActiveRecord
 
       attr_reader :dry_run
 
-      ALTER_TABLE_REGEX = /\AALTER\s+TABLE\W*(?<table_name>\w+)\W*(?<query>.*)$/i.freeze
+      ALTER_TABLE_PATTERN = /\AALTER\s+TABLE\W*(?<table_name>\w+)\W*(?<query>.*)$/i.freeze
+      QUERY_ALLOWABLE_CHARS = /[^0-9a-z_\s():'"{}]/i.freeze
+      CREATE_TABLE_PATTERN = /\Acreate\stable/i.freeze
+      DROP_TABLE_PATTERN = /\Acreate\stable/i.freeze
+      INSERT_SCHEMA_MIGRATION_PATTERN = /\Ainsert\sinto\s`schema_migrations`/i.freeze
+      DROP_SCHEMA_MIGRATION_PATTERN = /\Adelete\sfrom\s`schema_migrations`/i.freeze
 
       def parse_sql(sql)
-        capture = sql.match(ALTER_TABLE_REGEX)
+        capture = sql.match(ALTER_TABLE_PATTERN)
         return if capture.nil?
 
         captured_names = capture.names
@@ -70,7 +76,7 @@ module ActiveRecord
       end
 
       def clean_query(query)
-        cleaned = query.gsub(/[^0-9a-z_\s():'"{}]/i, '')
+        cleaned = query.gsub(QUERY_ALLOWABLE_CHARS, '')
         cleaned.gsub('"', '\"')
       end
 
@@ -85,127 +91,13 @@ module ActiveRecord
       end
 
       def create_or_drop_table?(sql)
-        /\Acreate\stable/i =~ sql ||
-          /\Adrop\stable/i =~ sql
+        CREATE_TABLE_PATTERN =~ sql ||
+          DROP_TABLE_PATTERN =~ sql
       end
 
       def schema_migration_update?(sql)
-        /\Ainsert\sinto\s`schema_migrations`/i =~ sql ||
-          /\Adelete\sfrom\s`schema_migrations`/i =~ sql
-      end
-
-      def run_ghost(table, query)
-        ghost_command = build_ghost_command(table, query)
-
-        Open3.popen2e(*ghost_command) do |_stdin, stdout_stderr, wait_thread|
-          stdout_stderr.each_line do |line|
-            if ready_to_cutover?(line)
-              cutover_file = cutover_flag_file(table)
-              puts "Removing cutover file (#{cutover_file}) to continue migration"
-              File.delete(cutover_file) if File.exist? cutover_file
-            end
-            puts "[gh-ost]:\t#{line}"
-          end
-
-          unless wait_thread.value.success?
-            raise GhostExecutionError, "gh-ost migration failed. exit code: #{wait_thread.value.exitstatus}"
-          end
-        end
-
-        cooldown
-      end
-
-      def build_ghost_command(table, query)
-        replica_server_id = rand(100_000)
-
-        command = [
-          'gh-ost',
-          '--max-load=Threads_running=150',
-          '--critical-load=Threads_running=4000',
-          '--chunk-size=1000',
-          "--throttle-control-replicas=#{read_replica_db_url}",
-          '--max-lag-millis=3000',
-          "--user=#{migration_db_user}",
-          "--host=#{read_replica_db_url}",
-          "--database=#{db_name}",
-          "--table=#{table}",
-          '--dml-batch-size=1000',
-          '--verbose',
-          "--alter=#{query}",
-          '--assume-rbr',
-          '--cut-over=default',
-          '--exact-rowcount',
-          '--concurrent-rowcount',
-          '--default-retries=1200',
-          '--cut-over-lock-timeout-seconds=9',
-          "--panic-flag-file=/tmp/ghost.panic.#{migration_id(table)}.flag",
-          "--assume-master-host=#{main_db_host}",
-          "--postpone-cut-over-flag-file=#{cutover_flag_file(table)}",
-          "--serve-socket-file=/tmp/ghost.#{migration_id(table)}.sock",
-          "--replica-server-id=#{replica_server_id}"
-        ]
-
-        command << "--password=#{migration_db_password}" unless migration_db_password.blank?
-
-        command << '--allow-on-master' if Rails.env.development?
-
-        unless dry_run
-          command << '--initially-drop-ghost-table'
-          command << '--initially-drop-old-table'
-          command << '--ok-to-drop-table'
-          command << '--execute'
-        end
-
-        command
-      end
-
-      def cooldown
-        return if dry_run
-
-        puts 'Cooling down for 5 seconds...'
-        5.times do
-          sleep 1
-          print '.'
-        end
-        puts ''
-      end
-
-      def ready_to_cutover?(output_line)
-        match = /\sState:\s(?<state>[^;]*)/.match(output_line)
-        return false if match.nil?
-
-        state = match[:state] rescue nil
-        return false if state.nil?
-
-        state.downcase == 'postponing cut-over'
-      end
-
-      def migration_id(table)
-        @migration_id ||= "#{table}_#{SecureRandom.hex}"
-      end
-
-      def cutover_flag_file(table)
-        "/tmp/ghost.postpone.#{migration_id(table)}.flag"
-      end
-
-      def db_name
-        ENV['DATABASE_NAME']
-      end
-
-      def main_db_host
-        ENV['DATABASE_MAIN_HOST']
-      end
-
-      def read_replica_db_url
-        ENV['DATABASE_READ_REPLICA_HOST']
-      end
-
-      def migration_db_user
-        ENV['DATABASE_MIGRATION_USER']
-      end
-
-      def migration_db_password
-        ENV['DATABASE_MIGRATION_PASSWORD']
+        INSERT_SCHEMA_MIGRATION_PATTERN =~ sql ||
+          DROP_SCHEMA_MIGRATION_PATTERN =~ sql
       end
     end
   end

@@ -9,13 +9,11 @@ Style/RescueModifier:
 
 Metrics/MethodLength:
   IgnoredMethods:
-    - run_ghost
     - build_ghost_command
     - ghost_mysql2_connection
 
 Metrics/AbcSize:
   IgnoredMethods:
-    - run_ghost
     - build_ghost_command
     - ghost_mysql2_connection
 
