@@ -32,7 +32,7 @@ TODO
 
 Since most database activity isn't a migration, we default to identical behavior to the Mysql2Adapter. No need to be executing a bunch of extra logic per query when you're only getting any value for migrations.
 
-To enable the ghost adapter, simply set `GHOST_MIGRATION=1` in the environment where you're running the migration. Like this:
+To enable the ghost adapter, simply set `MIGRATE_WITH_GHOST=1` in the environment where you're running the migration. Like this:
 
 ```
 MIGRATE_WITH_GHOST=1 bundle exec rake db:migrate
