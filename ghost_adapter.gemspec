@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Run your ActiveRecord ALTER TABLE migrations through gh-ost'
   spec.description   = spec.summary
   spec.homepage      = 'https://github.com/wetransfer/ghost_adapter'
-  spec.license       = 'MIT'
+  spec.license       = 'Hippocratic'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.5.0')
 
   spec.metadata['homepage_uri'] = spec.homepage
@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bump', '~> 0'
   spec.add_development_dependency 'bundler', '~> 2'
+  spec.add_development_dependency 'minitest', '~> 5.14'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rubocop', '~> 1'
 end

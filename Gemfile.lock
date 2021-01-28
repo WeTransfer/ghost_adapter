@@ -56,6 +56,7 @@ DEPENDENCIES
   bump (~> 0)
   bundler (~> 2)
   ghost_adapter!
+  minitest (~> 5.14)
   rake (~> 13.0)
   rubocop (~> 1)
 
