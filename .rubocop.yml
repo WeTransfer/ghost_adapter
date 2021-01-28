@@ -7,6 +7,10 @@ Style/Documentation:
 Style/RescueModifier:
   Enabled: false
 
+Metrics/BlockLength:
+  Exclude:
+    - test/**/*_test.rb
+
 Metrics/MethodLength:
   IgnoredMethods:
     - build_ghost_command
