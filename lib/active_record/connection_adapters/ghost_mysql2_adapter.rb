@@ -47,7 +47,7 @@ module ActiveRecord
         return if dry_run && should_skip_for_dry_run?(sql)
 
         if (table, query = parse_sql(sql))
-          GhostAdapter::Migrator.new(table, query, dry_run).start
+          GhostAdapter::Migrator.execute(table, query, dry_run)
         else
           super(sql, name)
         end
