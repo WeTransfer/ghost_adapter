@@ -27,7 +27,6 @@ module GhostAdapter
 
     def run_process
       command = GhostAdapter::Command.build(alter: query, table: table, dry_run: dry_run)
-      puts command.join(' ')
       Open3.popen2e(*command) do |_stdin, stdout_stderr, wait_thread|
         stdout_stderr.each_line do |line|
           cutover_if_ready(line)
