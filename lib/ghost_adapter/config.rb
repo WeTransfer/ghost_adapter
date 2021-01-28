@@ -6,7 +6,6 @@ module GhostAdapter
                    allow_nullable_unique_key
                    allow_on_master
                    approve_renamed_columns
-                   ask_pass
                    assume_master_host
                    assume_rbr
                    check_flag
