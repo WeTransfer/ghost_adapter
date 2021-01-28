@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Austin C Roos']
   spec.email         = ['austin.roos@wetransfer.com']
 
-  spec.summary       = 'Run your ActiveRecord ALTER TABLE migrations through gh-ost'
+  spec.summary       = 'Run ActiveRecord migrations through gh-ost'
   spec.description   = spec.summary
   spec.homepage      = 'https://github.com/wetransfer/ghost_adapter'
   spec.license       = 'Hippocratic'
