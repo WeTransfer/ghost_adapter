@@ -21,6 +21,10 @@ Metrics/AbcSize:
     - build_ghost_command
     - ghost_mysql2_connection
 
+Metrics/PerceivedComplexity:
+  IgnoredMethods:
+    - ghost_mysql2_connection
+
 AllCops:
   SuggestExtensions: false
   TargetRubyVersion: 2.5
