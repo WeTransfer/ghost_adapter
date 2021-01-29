@@ -1,5 +1,11 @@
 # Ghost Adapter
 
+![gem version](https://img.shields.io/gem/v/ghost_adapter)
+![travis](https://img.shields.io/travis/com/wetransfer/ghost_adapter)
+![Hippocratic License](https://img.shields.io/badge/license-Hippocratic-green)
+![gh-ost version](https://img.shields.io/badge/gh--ost%20version-1.1.0-blue)
+![depfu](https://img.shields.io/depfu/wetransfer/ghost_adapter)
+
 A tiny, _very configurable_ ActiveRecord adapter built for running [gh-ost](https://github.com/github/gh-ost) migrations. When not running migrations, it'll stay the heck out of the way.
 
 ## Installation
