@@ -24,11 +24,13 @@ Configure your ActiveRecord connection to use `ghost_mysql2` as the adapter in w
 
 For a standard rails project, in `config/database.yml` set `adapter: ghost_mysql2`.
 
-### Configure the Environment
+### Configuration
 
-TODO
+You can configure `ghost_adapter` with (nearly) all of the arguments allowed `gh-ost` in the command line. The arguments are up to date as of `gh-ost` version 1.1.0.
 
-### Using the adapter
+Read more about configuration methods in [the docs](./doc/configuration).
+
+### Running Migrations
 
 Since most database activity isn't a migration, we default to identical behavior to the Mysql2Adapter. No need to be executing a bunch of extra logic per query when you're only getting any value for migrations.
 
