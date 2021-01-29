@@ -1,5 +1,7 @@
 # Ghost Adapter
 
+![ghost](./doc/images/ghost.png)
+
 ![gem version](https://img.shields.io/gem/v/ghost_adapter)
 ![travis](https://img.shields.io/travis/com/wetransfer/ghost_adapter)
 ![Hippocratic License](https://img.shields.io/badge/license-Hippocratic-green)
@@ -64,3 +66,7 @@ The gem is available as open source under the terms of the [Hippocratic License]
 ## Code of Conduct
 
 Everyone interacting in the Ghost Adapter project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](./CODE_OF_CONDUCT.md).
+
+---
+
+Illustration by <a href="undefined">Icons 8</a> from <a href="https://icons8.com/">Icons8</a>
