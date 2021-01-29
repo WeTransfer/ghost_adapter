@@ -1,5 +1,6 @@
 require 'active_record/connection_adapters/mysql2_adapter'
 require 'ghost_adapter/migrator'
+require 'ghost_adapter/version_checker'
 
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 require 'mysql2'
@@ -36,6 +37,7 @@ module ActiveRecord
       ADAPTER_NAME = 'ghost_mysql2'.freeze
 
       def initialize(connection, logger, connection_options, config, dry_run: false)
+        GhostAdapter::VersionChecker.validate_executable!
         super(connection, logger, connection_options, config)
         @dry_run = dry_run
       end
