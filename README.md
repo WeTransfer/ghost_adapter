@@ -34,7 +34,7 @@ For a standard rails project, in `config/database.yml` set `adapter: ghost_mysql
 
 You can configure `ghost_adapter` with (nearly) all of the arguments allowed `gh-ost` in the command line. The arguments are up to date as of `gh-ost` version 1.1.0.
 
-Read more about configuration methods in [the docs](./doc/configuration).
+Read more about configuration methods in [the docs](./doc/configuration.md).
 
 ### Running Migrations
 
@@ -54,7 +54,8 @@ MIGRATE_WITH_GHOST=1 DRY_RUN=1 bundle exec rake db:migrate
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/wetransfer/ghost_adapter. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/wetransfer/ghost_adapter/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/wetransfer/ghost_adapter. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](./CODE_OF_CONDUCT.md).
+Please add your name to the [CONTRIBUTORS.md](./CONTRIBUTORS.md)
 
 ## License
 
@@ -62,4 +63,4 @@ The gem is available as open source under the terms of the [Hippocratic License]
 
 ## Code of Conduct
 
-Everyone interacting in the Ghost Adapter project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/wetransfer/ghost_adapter/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Ghost Adapter project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](./CODE_OF_CONDUCT.md).
