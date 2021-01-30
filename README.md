@@ -42,17 +42,24 @@ Read more about configuration methods in [the docs](./doc/configuration.md).
 
 Since most database activity isn't a migration, we default to identical behavior to the Mysql2Adapter. No need to be executing a bunch of extra logic per query when you're only getting any value for migrations.
 
-To enable the ghost adapter, simply set `MIGRATE_WITH_GHOST=1` in the environment where you're running the migration. Like this:
+To enable the ghost adapter, you have two options. First (recommended) is to use the provided rails generator:
 
-```
-MIGRATE_WITH_GHOST=1 bundle exec rake db:migrate
+```shell
+rails g ghost_adapter:install
 ```
 
-If you want to do a dry run first (recommended), no problem! Like this:
+This does everything you need. All migrations will run through gh-ost and otherwise the adapter will be ignored.
 
+Alternatively, you can enable (or disable) gh-ost migrations with an environment variable.
+
+```shell
+GHOST_MIGRATE=1 rake db:...
 ```
-MIGRATE_WITH_GHOST=1 DRY_RUN=1 bundle exec rake db:migrate
-```
+
+If you have used the rails generator, you can set the variable to a falsey value and it will override the behavior not to use gh-ost.
+
+- "truthy" values: `[1, t, true, y, yes]`
+- "falsey" values: `[0, f, false, n, no]`
 
 ## Contributing
 
