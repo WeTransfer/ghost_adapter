@@ -39,6 +39,7 @@ module ActiveRecord
 
       def initialize(connection, logger, connection_options, config, dry_run: false)
         super(connection, logger, connection_options, config)
+        @database = config[:database]
         @dry_run = dry_run
       end
 
@@ -49,7 +50,7 @@ module ActiveRecord
         return if dry_run && should_skip_for_dry_run?(sql)
 
         if (table, query = parse_sql(sql))
-          GhostAdapter::Migrator.execute(table, query, dry_run)
+          GhostAdapter::Migrator.execute(table, query, database, dry_run)
         else
           super(sql, name)
         end
@@ -57,7 +58,7 @@ module ActiveRecord
 
       private
 
-      attr_reader :dry_run
+      attr_reader :database, :dry_run
 
       ALTER_TABLE_PATTERN = /\AALTER\s+TABLE\W*(?<table_name>\w+)\W*(?<query>.*)$/i.freeze
       QUERY_ALLOWABLE_CHARS = /[^0-9a-z_\s():'"{}]/i.freeze

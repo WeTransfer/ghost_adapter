@@ -1,8 +1,9 @@
 module GhostAdapter
   class Command
-    def initialize(alter:, table:, dry_run: false)
+    def initialize(alter:, table:, database: nil, dry_run: false)
       @alter = alter
       @table = table
+      @database = GhostAdapter.config.database || database
       @dry_run = dry_run
       validate_args_and_config!
     end
@@ -20,12 +21,12 @@ module GhostAdapter
 
     EXECUTABLE = 'gh-ost'.freeze
 
-    attr_reader :alter, :table, :dry_run
+    attr_reader :alter, :database, :table, :dry_run
 
     def validate_args_and_config!
       raise ArgumentError, 'alter cannot be nil' if alter.nil?
       raise ArgumentError, 'table cannot be nil' if table.nil?
-      raise ArgumentError, 'database name missing in config' if database.nil?
+      raise ArgumentError, 'database cannot be nil' if database.nil?
     end
 
     def base_args
@@ -38,10 +39,6 @@ module GhostAdapter
 
     def execute_arg
       dry_run ? [] : ['--execute']
-    end
-
-    def database
-      GhostAdapter.config.database
     end
   end
 end
