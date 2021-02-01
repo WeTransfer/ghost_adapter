@@ -20,24 +20,28 @@ module GhostAdapter
 
     EXECUTABLE = 'gh-ost'.freeze
 
-    attr_reader :alter, :table, :database, :dry_run
+    attr_reader :alter, :table, :dry_run
 
     def validate_args_and_config!
       raise ArgumentError, 'alter cannot be nil' if alter.nil?
       raise ArgumentError, 'table cannot be nil' if table.nil?
-      raise ArgumentError, 'database name missing in config' if GhostAdapter.config.database.nil?
+      raise ArgumentError, 'database name missing in config' if database.nil?
     end
 
     def base_args
       [
         "--alter=#{alter}",
         "--table=#{table}",
-        "--database=#{GhostAdapter.config.database}"
+        "--database=#{database}"
       ]
     end
 
     def execute_arg
       dry_run ? [] : ['--execute']
+    end
+
+    def database
+      GhostAdapter.config.database
     end
   end
 end
