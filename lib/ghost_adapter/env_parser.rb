@@ -16,7 +16,7 @@ module GhostAdapter
     private
 
     def ghost_key?(key)
-      key.start_with? 'GHOST_'
+      key.start_with?('GHOST_') && (key != 'GHOST_MIGRATE')
     end
 
     def convert_env_key(key)
