@@ -14,6 +14,8 @@ module GhostAdapter
   end
 
   module Internal
+    @@ready_to_migrate = false # rubocop:disable Style/ClassVars
+
     def self.load_task
       return if @loaded
 
