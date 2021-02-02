@@ -8,8 +8,10 @@ module GhostAdapter
   end
 
   class Migrator
-    def self.execute(table, query, dry_run)
-      command = GhostAdapter::Command.new(alter: query, table: table, dry_run: dry_run)
+    def self.execute(table, query, database, dry_run)
+      command = GhostAdapter::Command.new(
+        alter: query, table: table, database: database, dry_run: dry_run
+      )
       Open3.popen2e(*command.to_a) do |_stdin, stdout_stderr, wait_thread|
         stdout_stderr.each_line do |line|
           puts "[gh-ost]:\t\t#{line}"
