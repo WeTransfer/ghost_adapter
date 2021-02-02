@@ -14,7 +14,7 @@ module GhostAdapter
   end
 
   module Internal
-    @@ready_to_migrate = false # rubocop:disable Style/ClassVars
+    @@ghost_migration_enabled = false # rubocop:disable Style/ClassVars
 
     def self.load_task
       return if @loaded
@@ -24,15 +24,15 @@ module GhostAdapter
       @loaded = true
     end
 
-    def self.ready_to_migrate!
-      @@ready_to_migrate = true # rubocop:disable Style/ClassVars
+    def self.enable_ghost_migration!
+      @@ghost_migration_enabled = true # rubocop:disable Style/ClassVars
     end
 
-    def self.ready_to_migrate?
+    def self.ghost_migration_enabeld?
       env_val = ENV['GHOST_MIGRATE']&.downcase
       return false if %w[0 n no f false].include?(env_val)
 
-      !!@@ready_to_migrate || %w[1 y yes t true].include?(env_val)
+      !!@@ghost_migration_enabled || %w[1 y yes t true].include?(env_val)
     end
   end
 end

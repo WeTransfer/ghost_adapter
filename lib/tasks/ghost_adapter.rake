@@ -17,5 +17,5 @@ migration_tasks.each do |task|
 end
 
 task ghost_adapter_exec: :environment do
-  GhostAdapter::Internal.ready_to_migrate!
+  GhostAdapter::Internal.enable_ghost_migration!
 end
