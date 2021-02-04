@@ -32,6 +32,8 @@ Configure your ActiveRecord connection to use `mysql2_ghost` as the adapter in w
 
 For a standard rails project, in `config/database.yml` set `adapter: mysql2_ghost`.
 
+For usage with `DATABASE_URL`, only a _very tiny_ modification is necessary. The URL should be like: `mysql2-ghost://` (notice the `-` instead of `_`). This is because the scheme of a URI must either alphanumeric or one of [`-`, `.`, `+`] ([more details](https://tools.ietf.org/html/rfc3986#section-3.1))
+
 ### Configuration
 
 You can configure `ghost_adapter` with (nearly) all of the arguments allowed `gh-ost` in the command line. The arguments are up to date as of `gh-ost` version 1.1.0.
