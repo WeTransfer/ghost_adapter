@@ -8,7 +8,7 @@ require 'mysql2'
 module ActiveRecord
   module ConnectionHandling
     # Establishes a connection to the database that's used by all Active Record objects.
-    def ghost_mysql2_connection(config)
+    def mysql2_ghost_connection(config)
       config = config.symbolize_keys
       config[:flags] ||= 0
 
