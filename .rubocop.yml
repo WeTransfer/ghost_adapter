@@ -14,16 +14,16 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   IgnoredMethods:
     - build_ghost_command
-    - ghost_mysql2_connection
+    - mysql2_ghost_connection
 
 Metrics/AbcSize:
   IgnoredMethods:
     - build_ghost_command
-    - ghost_mysql2_connection
+    - mysql2_ghost_connection
 
 Metrics/PerceivedComplexity:
   IgnoredMethods:
-    - ghost_mysql2_connection
+    - mysql2_ghost_connection
 
 AllCops:
   SuggestExtensions: false
