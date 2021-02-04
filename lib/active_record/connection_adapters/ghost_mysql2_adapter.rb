@@ -35,7 +35,7 @@ module ActiveRecord
 
   module ConnectionAdapters
     class GhostMysql2Adapter < Mysql2Adapter
-      ADAPTER_NAME = 'ghost_mysql2'.freeze
+      ADAPTER_NAME = 'mysql2_ghost'.freeze
 
       def initialize(connection, logger, connection_options, config, dry_run: false)
         super(connection, logger, connection_options, config)
