@@ -8,7 +8,7 @@ require 'mysql2'
 module ActiveRecord
   module ConnectionHandling
     # Establishes a connection to the database that's used by all Active Record objects.
-    def ghost_mysql2_connection(config)
+    def mysql2_ghost_connection(config)
       config = config.symbolize_keys
       config[:flags] ||= 0
 
@@ -22,7 +22,7 @@ module ActiveRecord
       if GhostAdapter::Internal.ghost_migration_enabeld?
         dry_run = ENV['DRY_RUN'] == '1'
         GhostAdapter::VersionChecker.validate_executable! unless ENV['SKIP_GHOST_VERSION_CHECK'] == '1'
-        ConnectionAdapters::GhostMysql2Adapter.new(client, logger, nil, config, dry_run: dry_run)
+        ConnectionAdapters::Mysql2GhostAdapter.new(client, logger, nil, config, dry_run: dry_run)
       else
         ConnectionAdapters::Mysql2Adapter.new(client, logger, nil, config)
       end
@@ -34,8 +34,8 @@ module ActiveRecord
   end
 
   module ConnectionAdapters
-    class GhostMysql2Adapter < Mysql2Adapter
-      ADAPTER_NAME = 'ghost_mysql2'.freeze
+    class Mysql2GhostAdapter < Mysql2Adapter
+      ADAPTER_NAME = 'mysql2_ghost'.freeze
 
       def initialize(connection, logger, connection_options, config, dry_run: false)
         super(connection, logger, connection_options, config)

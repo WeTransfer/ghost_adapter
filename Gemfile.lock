@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ghost_adapter (0.0.1)
+    ghost_adapter (0.0.2)
       activerecord (>= 5)
 
 GEM
@@ -21,7 +21,7 @@ GEM
     ast (2.4.2)
     bump (0.10.0)
     concurrent-ruby (1.1.8)
-    i18n (1.8.7)
+    i18n (1.8.8)
       concurrent-ruby (~> 1.0)
     minitest (5.14.3)
     parallel (1.20.1)

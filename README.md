@@ -28,9 +28,9 @@ And then execute:
 
 ### Connect with ActiveRecord
 
-Configure your ActiveRecord connection to use `ghost_mysql2` as the adapter in whichever environments you'd like to use `gh-ost`.
+Configure your ActiveRecord connection to use `mysql2_ghost` as the adapter in whichever environments you'd like to use `gh-ost`.
 
-For a standard rails project, in `config/database.yml` set `adapter: ghost_mysql2`.
+For a standard rails project, in `config/database.yml` set `adapter: mysql2_ghost`.
 
 ### Configuration
 
