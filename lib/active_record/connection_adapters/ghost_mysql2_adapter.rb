@@ -22,7 +22,7 @@ module ActiveRecord
       if GhostAdapter::Internal.ghost_migration_enabeld?
         dry_run = ENV['DRY_RUN'] == '1'
         GhostAdapter::VersionChecker.validate_executable! unless ENV['SKIP_GHOST_VERSION_CHECK'] == '1'
-        ConnectionAdapters::GhostMysql2Adapter.new(client, logger, nil, config, dry_run: dry_run)
+        ConnectionAdapters::Mysql2GhostAdapter.new(client, logger, nil, config, dry_run: dry_run)
       else
         ConnectionAdapters::Mysql2Adapter.new(client, logger, nil, config)
       end
@@ -34,7 +34,7 @@ module ActiveRecord
   end
 
   module ConnectionAdapters
-    class GhostMysql2Adapter < Mysql2Adapter
+    class Mysql2GhostAdapter < Mysql2Adapter
       ADAPTER_NAME = 'mysql2_ghost'.freeze
 
       def initialize(connection, logger, connection_options, config, dry_run: false)
