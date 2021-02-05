@@ -20,6 +20,7 @@ GEM
       zeitwerk (~> 2.3)
     ast (2.4.2)
     bump (0.10.0)
+    byebug (11.1.3)
     concurrent-ruby (1.1.8)
     i18n (1.8.8)
       concurrent-ruby (~> 1.0)
@@ -55,6 +56,7 @@ PLATFORMS
 DEPENDENCIES
   bump (~> 0)
   bundler (~> 2)
+  byebug (~> 11.1)
   ghost_adapter!
   minitest (~> 5.14)
   rake (~> 13.0)

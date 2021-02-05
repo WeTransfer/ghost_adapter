@@ -84,6 +84,11 @@ module GhostAdapter
       super(config_options)
     end
 
+    def merge!(other_config)
+      other_config.compact.each { |k, v| self[k] = v }
+      self
+    end
+
     def compact
       to_h.compact
     end
