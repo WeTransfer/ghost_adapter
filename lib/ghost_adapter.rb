@@ -8,9 +8,19 @@ module GhostAdapter
   end
 
   def self.setup(options = {})
-    @@config = GhostAdapter::Config.new(options) # rubocop:disable Style/ClassVars
+    new_config = GhostAdapter::Config.new(options)
+
+    if defined? @@config
+      @@config.merge!(new_config)
+    else
+      @@config = new_config # rubocop:disable Style/ClassVars
+    end
 
     yield @@config if block_given?
+  end
+
+  def self.clear_config
+    @@config = GhostAdapter::Config.new # rubocop:disable Style/ClassVars
   end
 
   module Internal

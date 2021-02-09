@@ -16,6 +16,10 @@ Metrics/MethodLength:
     - build_ghost_command
     - mysql2_ghost_connection
 
+Metrics/ModuleLength:
+  Exclude:
+    - lib/ghost_adapter/config.rb
+
 Metrics/AbcSize:
   IgnoredMethods:
     - build_ghost_command

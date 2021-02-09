@@ -3,6 +3,10 @@ require 'ghost_adapter/command'
 
 module GhostAdapter
   class CommandTest < MiniTest::Test
+    def setup
+      GhostAdapter.clear_config
+    end
+
     def test_starts_with_ghost_executable
       command = GhostAdapter::Command.new(alter: '', table: '', database: '')
       assert_equal command.to_a[0], 'gh-ost'
