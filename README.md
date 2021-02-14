@@ -2,11 +2,10 @@
 
 ![ghost](./doc/images/ghost.png)
 
-![gem version](https://img.shields.io/gem/v/ghost_adapter)
-![travis](https://img.shields.io/travis/com/wetransfer/ghost_adapter)
-![Hippocratic License](https://img.shields.io/badge/license-Hippocratic-green?link=https://github.com/WeTransfer/ghost_adapter/blob/main/LICENSE.md)
-![gh-ost version](https://img.shields.io/badge/gh--ost%20version-1.1.0-blue?link=https://github.com/github/gh-ost/releases/latest)
-![depfu](https://img.shields.io/depfu/wetransfer/ghost_adapter)
+[![Gem](https://img.shields.io/gem/v/ghost_adapter)](https://rubygems.org/gems/ghost_adapter)
+[![Build Status](https://travis-ci.com/WeTransfer/ghost_adapter.svg?branch=main)](https://travis-ci.com/WeTransfer/ghost_adapter)
+[![Hippocratic License](https://img.shields.io/badge/license-Hippocratic-green)](https://github.com/WeTransfer/ghost_adapter/blob/main/LICENSE.md)
+[![gh-ost version](https://img.shields.io/badge/gh--ost%20version-1.1.0-blue)](https://github.com/github/gh-ost/releases/latest)
 
 A tiny, _very configurable_ ActiveRecord adapter built for running [gh-ost](https://github.com/github/gh-ost) migrations. When not running migrations, it'll stay the heck out of the way.
 
