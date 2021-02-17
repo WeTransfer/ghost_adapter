@@ -12,7 +12,7 @@ module GhostAdapter
       [
         EXECUTABLE,
         *base_args,
-        *GhostAdapter.config.as_args,
+        *configured_args,
         *execute_arg
       ]
     end
@@ -35,6 +35,10 @@ module GhostAdapter
         "--table=#{table}",
         "--database=#{database}"
       ]
+    end
+
+    def configured_args
+      GhostAdapter.config.as_args(context: { table: table, timestamp: Time.now.utc.to_i })
     end
 
     def execute_arg

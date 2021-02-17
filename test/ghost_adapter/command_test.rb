@@ -83,5 +83,21 @@ module GhostAdapter
         GhostAdapter::Command.new(alter: '', table: '')
       end
     end
+
+    def test_templated_arg_timestamp
+      config = GhostAdapter::Config.new(panic_flag_file: '<%= timestamp %>.flag')
+      GhostAdapter.stub :config, config do
+        command = GhostAdapter::Command.new(alter: '', table: '', database: '')
+        assert(command.to_a.any? { |arg| arg =~ /--panic-flag-file=[0-9]+.flag/ })
+      end
+    end
+
+    def test_templated_arg_table
+      config = GhostAdapter::Config.new(panic_flag_file: '<%= table %>.flag')
+      GhostAdapter.stub :config, config do
+        command = GhostAdapter::Command.new(alter: '', table: 'test-table', database: '')
+        assert_includes command.to_a, '--panic-flag-file=test-table.flag'
+      end
+    end
   end
 end

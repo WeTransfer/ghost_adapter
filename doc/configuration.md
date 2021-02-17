@@ -16,6 +16,16 @@ To get a list of possible configuration options, simply run `gh-ost --help` loca
 - [Via Rails Configuration Files](./config/rails_configuration_files.md)
 - [Via GhostAdapter.setup Method](./config/setup_method.md)
 
+## Per-Migration Configuration with ERB
+
+For any configuration option that you want present on every migration, but with a unique value, you can use ERB syntax in your value. At the moment, the only values available are `table` and `timestamp`. For example:
+
+```ruby
+config.panic_flag_file = '/tmp/panic-<%= table %>-<%= timestamp %>'
+```
+
+Anything other than `table` or `timestamp` will simply be ignored, with the ERB syntax removed.
+
 ## Nice to Know
 
 - For boolean args (that do not require a value in the command line), set them as `true`/`false` and they will be either included or excluded accordingly.

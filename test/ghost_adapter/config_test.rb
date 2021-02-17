@@ -66,5 +66,17 @@ module GhostAdapter
 
       assert_equal c1.verbose, c2.verbose
     end
+
+    def test_option_with_template
+      config = Config.new(panic_flag_file: 'panic-<%= table %>')
+      args = config.as_args(context: { table: 'objects' })
+      assert_equal args.first, '--panic-flag-file=panic-objects'
+    end
+
+    def test_option_with_template_missing_variable
+      config = Config.new(panic_flag_file: 'panic-<%= not_table %>')
+      args = config.as_args(context: { table: 'objects' })
+      assert_equal args.first, '--panic-flag-file=panic-'
+    end
   end
 end

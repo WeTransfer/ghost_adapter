@@ -1,3 +1,4 @@
+require 'erb'
 require 'ghost_adapter/env_parser'
 
 module GhostAdapter
@@ -93,17 +94,33 @@ module GhostAdapter
       to_h.compact
     end
 
-    def as_args
+    def as_args(context: {})
       compact.map do |key, value|
         next unless value  # Skip both false and null values
 
-        hyphenated_key = key.to_s.gsub('_', '-')
-        if value == true
-          "--#{hyphenated_key}"
-        else
-          "--#{hyphenated_key}=#{value}"
-        end
+        create_arg(key, value, context)
       end.compact
+    end
+
+    private
+
+    def create_arg(key, value, context)
+      value = template_result(value, context) if value.is_a?(String)
+
+      hyphenated_key = key.to_s.gsub('_', '-')
+      if value == true
+        "--#{hyphenated_key}"
+      else
+        "--#{hyphenated_key}=#{value}"
+      end
+    end
+
+    def template_result(value, context)
+      ERB.new(value).result_with_hash(context)
+    rescue NameError
+      value.gsub(/<%=?[^%]*%>/, '')
+    rescue StandardError
+      value
     end
   end
 end
