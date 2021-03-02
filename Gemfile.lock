@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ghost_adapter (0.1.0)
+    ghost_adapter (0.1.1)
       activerecord (>= 5)
 
 GEM
