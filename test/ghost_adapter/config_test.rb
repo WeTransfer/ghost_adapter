@@ -12,6 +12,24 @@ module GhostAdapter
       assert_equal config.compact, options
     end
 
+    def test_with_env_adds_env_keys
+      config = Config.new
+      refute config.with_env[:debug]
+
+      ENV['GHOST_DEBUG'] = 'y'
+      assert config.with_env[:debug]
+
+      ENV['GHOST_DEBUG'] = nil
+    end
+
+    def test_with_env_does_not_mutate_config
+      ENV['GHOST_DEBUG'] = 'y'
+      config = Config.new
+
+      assert config.with_env[:debug]
+      refute config.debug
+    end
+
     def test_as_args_skips_false_values
       options = { verbose: false }
       config = Config.new(options)

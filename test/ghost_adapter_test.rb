@@ -43,9 +43,10 @@ class GhostAdapterTest < MiniTest::Test
 
   def test_setup_with_hash_and_block_overrides_hash_values_for_same_key
     GhostAdapter.clear_config
+    keys = GhostAdapter::CONFIG_KEYS.take(2)
 
-    hash_keys = GhostAdapter::CONFIG_KEYS.take(2).map { |k| [k, true] }.to_h
-    block_keys = GhostAdapter::CONFIG_KEYS.take(2).map { |k| [k, false] }.to_h
+    hash_keys = keys.map { |k| [k, true] }.to_h
+    block_keys = keys.map { |k| [k, false] }.to_h
 
     GhostAdapter.setup(hash_keys) do |config|
       block_keys.each do |k, v|
@@ -66,7 +67,9 @@ class GhostAdapterTest < MiniTest::Test
       config.send("#{second_key}=", 'second_key')
     end
 
-    assert_equal GhostAdapter.config.compact, { first_key => 'first_key', second_key => 'second_key' }
+    config = GhostAdapter.config
+    assert_equal 'first_key', config[first_key]
+    assert_equal 'second_key', config[second_key]
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -76,13 +79,13 @@ class GhostAdapterTest < MiniTest::Test
     keys = GhostAdapter::CONFIG_KEYS.sample(2)
 
     GhostAdapter.setup({ keys[0] => 'first', keys[1] => 'first' })
-    config = GhostAdapter.config.compact
+    config = GhostAdapter.config
     assert_equal 'first', config[keys[0]]
     assert_equal 'first', config[keys[1]]
 
     GhostAdapter.setup({ keys[0] => 'second' })
 
-    config = GhostAdapter.config.compact
+    config = GhostAdapter.config
     assert_equal 'second', config[keys[0]]
     assert_equal 'first', config[keys[1]]
   end
