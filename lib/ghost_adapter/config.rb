@@ -78,15 +78,14 @@ module GhostAdapter
                    user
                    verbose].freeze
   Config = Struct.new(*CONFIG_KEYS, keyword_init: true) do
-    def initialize(options = {})
-      env_config = EnvParser.new(ENV).config
-      config_options = options.merge(env_config)
-      super(config_options)
-    end
-
     def merge!(other_config)
       other_config.compact.each { |k, v| self[k] = v }
       self
+    end
+
+    def with_env
+      env_config = EnvParser.new(ENV).config
+      compact.merge(env_config)
     end
 
     def compact
@@ -94,16 +93,20 @@ module GhostAdapter
     end
 
     def as_args
-      compact.map do |key, value|
-        next unless value  # Skip both false and null values
+      with_env.map { |key, value| arg(key, value) }.compact
+    end
 
-        hyphenated_key = key.to_s.gsub('_', '-')
-        if value == true
-          "--#{hyphenated_key}"
-        else
-          "--#{hyphenated_key}=#{value}"
-        end
-      end.compact
+    private
+
+    def arg(key, value)
+      return unless value
+
+      hyphenated_key = key.to_s.gsub('_', '-')
+      if value == true
+        "--#{hyphenated_key}"
+      else
+        "--#{hyphenated_key}=#{value}"
+      end
     end
   end
 end

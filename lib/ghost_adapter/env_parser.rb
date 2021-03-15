@@ -7,6 +7,9 @@ module GhostAdapter
         next unless ghost_key?(key)
 
         config_key = convert_env_key(key)
+
+        next unless GhostAdapter::CONFIG_KEYS.include?(config_key)
+
         config_value = convert_env_value(value)
 
         [config_key, config_value]
@@ -20,7 +23,7 @@ module GhostAdapter
     end
 
     def convert_env_key(key)
-      key.gsub('GHOST_', '').downcase
+      key.gsub('GHOST_', '').downcase.to_sym
     end
 
     def convert_env_value(value)
