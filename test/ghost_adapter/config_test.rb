@@ -14,20 +14,21 @@ module GhostAdapter
 
     def test_with_env_adds_env_keys
       config = Config.new
-      refute config.with_env[:debug]
+      refute config.with_env[:tungsten]
 
-      ENV['GHOST_DEBUG'] = 'y'
-      assert config.with_env[:debug]
+      ENV['GHOST_TUNGSTEN'] = 'y'
+      assert config.with_env[:tungsten]
 
-      ENV['GHOST_DEBUG'] = nil
+      ENV['GHOST_TUNGSTEN'] = nil
     end
 
     def test_with_env_does_not_mutate_config
-      ENV['GHOST_DEBUG'] = 'y'
+      ENV['GHOST_TUNGSTEN'] = 'y'
       config = Config.new
 
-      assert config.with_env[:debug]
-      refute config.debug
+      assert config.with_env[:tungsten]
+      refute config.tungsten
+      ENV['GHOST_TUNGSTEN'] = nil
     end
 
     def test_as_args_skips_false_values
