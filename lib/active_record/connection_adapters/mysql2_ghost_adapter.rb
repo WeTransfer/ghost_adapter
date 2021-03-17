@@ -56,6 +56,16 @@ module ActiveRecord
         end
       end
 
+      def add_index(table_name, column_name, options = {})
+        index_name, index_type, index_columns, index_options = add_index_options(table_name, column_name, options)
+        execute "ALTER TABLE #{quote_table_name(table_name)} ADD #{index_type} INDEX #{quote_column_name(index_name)} (#{index_columns})#{index_options}" # rubocop:disable Layout/LineLength
+      end
+
+      def remove_index(table_name, options = {})
+        index_name = index_name_for_remove(table_name, options)
+        execute "ALTER TABLE #{quote_table_name(table_name)} DROP INDEX #{quote_column_name(index_name)}"
+      end
+
       private
 
       attr_reader :database, :dry_run
