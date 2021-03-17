@@ -90,21 +90,3 @@ RSpec.describe GhostAdapter do
     end
   end
 end
-
-#   def test_setup_called_twice
-#     GhostAdapter.clear_config
-
-#     keys = GhostAdapter::CONFIG_KEYS.sample(2)
-
-#     GhostAdapter.setup({ keys[0] => 'first', keys[1] => 'first' })
-#     config = GhostAdapter.config.compact
-#     assert_equal 'first', config[keys[0]]
-#     assert_equal 'first', config[keys[1]]
-
-#     GhostAdapter.setup({ keys[0] => 'second' })
-
-#     config = GhostAdapter.config.compact
-#     assert_equal 'second', config[keys[0]]
-#     assert_equal 'first', config[keys[1]]
-#   end
-# end
