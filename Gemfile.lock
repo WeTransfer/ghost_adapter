@@ -74,7 +74,6 @@ DEPENDENCIES
   bundler (~> 2)
   byebug (~> 11.1)
   ghost_adapter!
-  minitest (~> 5.14)
   rake (~> 13.0)
   rspec (~> 3)
   rubocop (~> 1)
