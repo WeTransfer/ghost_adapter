@@ -10,6 +10,7 @@ Style/RescueModifier:
 Metrics/BlockLength:
   Exclude:
     - test/**/*_test.rb
+    - spec/**/*_spec.rb
 
 Metrics/MethodLength:
   IgnoredMethods:

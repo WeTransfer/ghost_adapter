@@ -1,3 +1,8 @@
+require 'active_record'
+require 'active_support/all'
+
+require 'active_record/connection_adapters/mysql2_ghost_adapter'
+
 require 'ghost_adapter/config'
 
 require 'ghost_adapter/railtie' if defined? ::Rails::Railtie
