@@ -1,8 +1,6 @@
 require 'active_record/connection_adapters/mysql2_adapter'
 require 'ghost_adapter/migrator'
 require 'ghost_adapter/version_checker'
-
-gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 require 'mysql2'
 
 module ActiveRecord
