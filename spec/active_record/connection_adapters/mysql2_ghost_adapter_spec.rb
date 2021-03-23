@@ -3,7 +3,7 @@ require 'active_record/connection_adapters/abstract/connection_pool'
 
 RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
   let(:logger) { double(:logger, puts: true) }
-  let(:mysql_client) { Mysql2::Client.new }
+  let(:mysql_client) { double('Mysql2::Client', query_options: {}, query: nil) }
 
   subject { described_class.new(mysql_client, logger, {}, {}) }
 
