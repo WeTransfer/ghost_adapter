@@ -1,3 +1,5 @@
+require 'open3'
+
 module GhostAdapter
   class IncompatibleVersion < StandardError
     def initialize(version = nil)
