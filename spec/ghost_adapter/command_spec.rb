@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'English'
 require 'ghost_adapter/command'
 
 RSpec.describe GhostAdapter::Command do
@@ -9,6 +10,21 @@ RSpec.describe GhostAdapter::Command do
   it 'always starts with gh-ost executable' do
     command = described_class.new(alter: '', table: '', database: '')
     expect(command.to_a[0]).to eq('gh-ost')
+  end
+
+  it 'passes pid, timestamp, table, database, unique_id to Config#as_args' do
+    config = GhostAdapter::Config.new
+    command = described_class.new(alter: '', table: '', database: '')
+    expect(GhostAdapter).to receive(:config).and_return(config)
+    expect(config).to receive(:as_args)
+      .with(context: {
+              pid: anything,
+              timestamp: anything,
+              table: anything,
+              database: anything,
+              unique_id: anything
+            })
+    command.to_a
   end
 
   describe 'constructor arguments' do

@@ -61,6 +61,21 @@ RSpec.describe GhostAdapter::Config do
       config = described_class.new(options)
       expect(config.as_args).to include '--cut-over=default'
     end
+
+    context 'with ERB templated value' do
+      it 'substitutes config values' do
+        options = { user: 'foo', panic_flag_file: '/tmp/<%= user %>.flag' }
+        config = described_class.new(options)
+        expect(config.as_args).to include '--panic-flag-file=/tmp/foo.flag'
+      end
+
+      it 'substitues values passed as context' do
+        options = { panic_flag_file: '/tmp/<%= foo %>.flag' }
+        config = described_class.new(options)
+        args = config.as_args(context: { foo: 'bar' })
+        expect(args).to include '--panic-flag-file=/tmp/bar.flag'
+      end
+    end
   end
 
   describe '#merge!' do

@@ -92,21 +92,30 @@ module GhostAdapter
       to_h.compact
     end
 
-    def as_args
-      with_env.map { |key, value| arg(key, value) }.compact
+    def as_args(context: {})
+      full_context = context.merge(compact)
+      with_env.map { |key, value| arg(key, value, full_context) }.compact
     end
 
     private
 
-    def arg(key, value)
+    def arg(key, value, context)
       return unless value
 
       hyphenated_key = key.to_s.gsub('_', '-')
       if value == true
         "--#{hyphenated_key}"
       else
-        "--#{hyphenated_key}=#{value}"
+        substituted_value = substitute_value(value, context)
+        "--#{hyphenated_key}=#{substituted_value}"
       end
+    end
+
+    def substitute_value(value, context)
+      return value unless value.is_a? String
+      return value unless value =~ /<%=.*%>/
+
+      ERB.new(value).result_with_hash(context)
     end
   end
 end
