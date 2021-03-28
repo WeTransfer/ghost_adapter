@@ -44,13 +44,13 @@ RSpec.describe GhostAdapter::Command do
       it 'raises error when alter argument is missing' do
         expect do
           described_class.new(table: '', database: '')
-        end.to raise_error(ArgumentError, 'missing keyword: :alter')
+        end.to raise_error(ArgumentError, /missing keyword: :{0,1}alter/)
       end
 
       it 'raises error when table argument is missing' do
         expect do
           described_class.new(alter: '', database: '')
-        end.to raise_error(ArgumentError, 'missing keyword: :table')
+        end.to raise_error(ArgumentError, /missing keyword: :{0,1}table/)
       end
 
       it 'raises error when database argument (and config) is missing' do
