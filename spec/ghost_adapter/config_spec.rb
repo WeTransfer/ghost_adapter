@@ -15,6 +15,22 @@ RSpec.describe GhostAdapter::Config do
     end
   end
 
+  describe '#with_env' do
+    before do
+      allow_any_instance_of(GhostAdapter::EnvParser).to receive(:config).and_return({ tungsten: true })
+    end
+
+    it 'overwrites config values with ENV values' do
+      config = described_class.new(tungsten: false)
+      expect(config.with_env[:tungsten]).to be true
+    end
+
+    it 'does not mutate self' do
+      config = described_class.new(tungsten: false)
+      expect(config.tungsten).to be false
+    end
+  end
+
   describe '#as_args' do
     it 'skips false values' do
       options = { verbose: false }
