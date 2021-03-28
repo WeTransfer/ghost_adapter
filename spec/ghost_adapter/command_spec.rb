@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'English'
 require 'ghost_adapter/command'
 
 RSpec.describe GhostAdapter::Command do
