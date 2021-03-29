@@ -69,7 +69,7 @@ RSpec.describe GhostAdapter::Config do
         expect(config.as_args).to include '--panic-flag-file=/tmp/foo.flag'
       end
 
-      it 'substitues values passed as context' do
+      it 'substitutes values passed as context' do
         options = { panic_flag_file: '/tmp/<%= foo %>.flag' }
         config = described_class.new(options)
         args = config.as_args(context: { foo: 'bar' })
