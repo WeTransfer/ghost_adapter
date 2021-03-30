@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.0
+
+- Add templating to configuration values.  See [the docs](./docs/config/templating.md) for more info on how to use this feature.
+
 ## 0.1.4
 
 - Fix bug caused by missing `require 'open3'` that occurs for some ruby versions
