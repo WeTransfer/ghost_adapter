@@ -21,6 +21,6 @@ end
 
 ## Other Configuration Methods
 
-- [Via Environment Variable](./config/environment_variables.md)
-- [Via Rails Configuration Files](./config/rails_configuration_files.md)
-- [Via GhostAdapter.setup Method](./config/setup_method.md)
+- [Via Environment Variable](./environment_variables.md)
+- [Via Rails Configuration Files](./rails_configuration_files.md)
+- [Via GhostAdapter.setup Method](./setup_method.md)
