@@ -16,6 +16,10 @@ To get a list of possible configuration options, simply run `gh-ost --help` loca
 - [Via Rails Configuration Files](./config/rails_configuration_files.md)
 - [Via GhostAdapter.setup Method](./config/setup_method.md)
 
+## Templating
+
+You can use ERB templates to get dynamic values for your configuration. Read more here: [Templating](./config/templating.md)
+
 ## Nice to Know
 
 - For boolean args (that do not require a value in the command line), set them as `true`/`false` and they will be either included or excluded accordingly.

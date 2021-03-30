@@ -1,3 +1,5 @@
+require 'English'
+
 module GhostAdapter
   class Command
     def initialize(alter:, table:, database: nil, dry_run: false)
@@ -12,7 +14,7 @@ module GhostAdapter
       [
         EXECUTABLE,
         *base_args,
-        *GhostAdapter.config.as_args,
+        *config_args,
         *execute_arg
       ]
     end
@@ -35,6 +37,18 @@ module GhostAdapter
         "--table=#{table}",
         "--database=#{database}"
       ]
+    end
+
+    def config_args
+      context = {
+        pid: $PID,
+        table: table,
+        database: database,
+        timestamp: Time.now.utc.to_i,
+        unique_id: SecureRandom.uuid
+      }
+
+      GhostAdapter.config.as_args(context: context)
     end
 
     def execute_arg

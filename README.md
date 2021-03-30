@@ -31,7 +31,7 @@ Configure your ActiveRecord connection to use `mysql2_ghost` as the adapter in w
 
 For a standard rails project, in `config/database.yml` set `adapter: mysql2_ghost`.
 
-For usage with `DATABASE_URL`, only a _very tiny_ modification is necessary. The URL should be like: `mysql2-ghost://` (notice the `-` instead of `_`). This is because the scheme of a URI must either alphanumeric or one of [`-`, `.`, `+`] ([more details](https://tools.ietf.org/html/rfc3986#section-3.1))
+For usage with `DATABASE_URL`, only a _very tiny_ modification is necessary. The URL should be like: `mysql2-ghost://` (notice the `-` instead of `_`). This is because the scheme of a URI must be either alphanumeric or one of [`-`, `.`, `+`] ([more details](https://tools.ietf.org/html/rfc3986#section-3.1))
 
 ### Configuration
 
@@ -41,7 +41,7 @@ Read more about configuration methods in [the docs](./doc/configuration.md).
 
 ### Running Migrations
 
-Since most database activity isn't a migration, we default to identical behavior to the Mysql2Adapter. No need to be executing a bunch of extra logic per query when you're only getting any value for migrations.
+Since most database activity isn't a migration, we default to just using the `Mysql2Adapter`. No need to be executing a bunch of extra logic per query when you're only getting any value for migrations.
 
 To enable the ghost adapter, you have two options. First (recommended) is to use the provided rails generator:
 
