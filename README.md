@@ -3,7 +3,7 @@
 ![ghost](./doc/images/ghost.png)
 
 [![Gem](https://img.shields.io/gem/v/ghost_adapter)](https://rubygems.org/gems/ghost_adapter)
-[![Build Status](https://travis-ci.com/WeTransfer/ghost_adapter.svg?branch=main)](https://travis-ci.com/WeTransfer/ghost_adapter)
+![GitHub Actions Workflow](https://github.com/WeTransfer/ghost_adapter/actions/workflows/tests.yml/badge.svg)
 [![Hippocratic License](https://img.shields.io/badge/license-Hippocratic-green)](https://github.com/WeTransfer/ghost_adapter/blob/main/LICENSE.md)
 [![gh-ost version](https://img.shields.io/badge/gh--ost%20version-1.1.0-blue)](https://github.com/github/gh-ost/releases/latest)
 
