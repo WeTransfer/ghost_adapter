@@ -1,4 +1,5 @@
 require 'active_record/connection_adapters/mysql2_adapter'
+require 'ghost_adapter'
 require 'ghost_adapter/migrator'
 require 'ghost_adapter/version_checker'
 require 'mysql2'
