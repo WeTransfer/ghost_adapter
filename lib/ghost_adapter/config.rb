@@ -8,6 +8,7 @@ module GhostAdapter
                    approve_renamed_columns
                    assume_master_host
                    assume_rbr
+                   azure
                    check_flag
                    chunk_size
                    concurrent_rowcount
