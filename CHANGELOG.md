@@ -1,11 +1,17 @@
 # CHANGELOG
 
+## 0.2.2
+
+- Bump rexml from 3.2.4 to 3.2.5 (security fix) ([#35](https://github.com/WeTransfer/ghost_adapter/pull/35))
+- Add azure configuration option now available with gh-ost v1.1.1 ([#36](https://github.com/WeTransfer/ghost_adapter/pull/36))
+
 ## 0.2.1
+
 - Fix bug caused by missing `require 'ghost_adapter'` for non-rails apps ([#34](https://github.com/WeTransfer/ghost_adapter/pull/34))
 
 ## 0.2.0
 
-- Add templating to configuration values.  See [the docs](./docs/config/templating.md) for more info on how to use this feature.
+- Add templating to configuration values. See [the docs](./docs/config/templating.md) for more info on how to use this feature.
 
 ## 0.1.4
 
