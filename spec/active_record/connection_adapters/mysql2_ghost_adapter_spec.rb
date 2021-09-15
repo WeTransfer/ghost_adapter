@@ -8,6 +8,25 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
   subject { described_class.new(mysql_client, logger, {}, {}) }
 
   describe 'schema statements' do
+    describe 'clean_query' do
+      let(:table_name) { 'foo' }
+
+      it 'parses query correctly' do
+        sql =
+          'ADD index_type INDEX `bar_index_name` (`bar_id`), '\
+          'ADD index_type INDEX `baz_index_name` (`baz_id`);;;'
+
+        sanatized_sql =
+          'ADD index_type INDEX bar_index_name (bar_id), '\
+          'ADD index_type INDEX baz_index_name (baz_id)'
+
+        expect(GhostAdapter::Migrator).to receive(:execute)
+          .with(table_name, sanatized_sql, any_args)
+
+        subject.execute("ALTER TABLE #{table_name} #{sql}")
+      end
+    end
+
     describe '#add_index' do
       let(:table_name) { :foo }
       let(:column_name) { :bar_id }
