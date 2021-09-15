@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.2.3
+- Add comma to allowed characters when cleaning SQL queries ([#52](https://github.com/WeTransfer/ghost_adapter/pull/52))
+
 ## 0.2.2
 
 - Bump rexml from 3.2.4 to 3.2.5 (security fix) ([#35](https://github.com/WeTransfer/ghost_adapter/pull/35))
