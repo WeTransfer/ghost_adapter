@@ -8,7 +8,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
   subject { described_class.new(mysql_client, logger, {}, {}) }
 
   before do
-    allow(mysql_client).to receive(:server_info).and_return('8.0.27')
+    allow(mysql_client).to receive(:server_info).and_return({ id: 50_732, version: '5.7.32-log' })
   end
 
   describe 'schema statements' do
