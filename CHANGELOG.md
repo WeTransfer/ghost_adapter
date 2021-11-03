@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.3.0
+- Fix compatibility for ActiveRecord 6.1 ([#61](https://github.com/WeTransfer/ghost_adapter/pull/61))
+
 ## 0.2.3
 - Add comma to allowed characters when cleaning SQL queries ([#52](https://github.com/WeTransfer/ghost_adapter/pull/52))
 
