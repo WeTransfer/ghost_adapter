@@ -43,4 +43,4 @@ jobs:
       - name: Run rubocop
         run: bundle exec rake rubocop
       - name: Run tests
-        run: bundle exec rake spec
+        run: bundle exec --gemfile ${{ matrix.gemfile }} rspec

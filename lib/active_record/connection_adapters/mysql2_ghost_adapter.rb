@@ -91,7 +91,8 @@ module ActiveRecord
           execute sql
         end
 
-        def remove_index(table_name, **options)
+        def remove_index(table_name, options = {})
+          options = { column: options } unless options.is_a?(Hash)
           index_name = index_name_for_remove(table_name, options)
           execute "ALTER TABLE #{quote_table_name(table_name)} DROP INDEX #{quote_column_name(index_name)}"
         end
@@ -149,14 +150,14 @@ module ActiveRecord
         sql = %w[ALTER TABLE]
         sql << quote_table_name(table_name)
         sql << 'ADD'
-        sql << index_type if index_type
+        sql << index_type
         sql << 'INDEX'
         sql << quote_column_name(index_name)
         sql << "USING #{using}" if using
         sql << "(#{column_names})"
         sql << algorithm
 
-        sql.compact.join(' ')
+        sql.compact.join(' ').gsub(/\s+/, ' ')
       end
 
       def quoted_columns(index)
