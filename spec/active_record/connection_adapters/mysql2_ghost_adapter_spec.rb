@@ -34,13 +34,12 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
     describe '#add_index' do
       let(:table_name) { :foo }
       let(:column_name) { :bar_id }
-      let(:options) { {} }
       let(:sql) { 'ADD index_type INDEX `index_name` (`bar_id`)' }
 
       before do
         allow(subject).to(
           receive(:add_index_options)
-          .with(table_name, column_name, options)
+          .with(table_name, column_name)
           .and_return(['index_name', 'index_type', "`#{column_name}`"])
         )
       end
@@ -52,7 +51,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
             "ALTER TABLE `#{table_name}` ADD index_type INDEX `index_name` (`bar_id`)"
           )
         )
-        subject.add_index(table_name, column_name, options)
+        subject.add_index(table_name, column_name)
       end
     end
 
@@ -64,7 +63,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
       before do
         allow(subject).to(
           receive(:index_name_for_remove)
-          .with(table_name, options)
+          .with(table_name, nil, options)
           .and_return('index_name')
         )
       end
@@ -74,7 +73,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           receive(:execute)
           .with("ALTER TABLE `#{table_name}` DROP INDEX `index_name`")
         )
-        subject.remove_index(table_name, options)
+        subject.remove_index(table_name, nil, options)
       end
     end
   end
