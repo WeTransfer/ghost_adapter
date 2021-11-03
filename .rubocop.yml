@@ -11,12 +11,28 @@ Metrics/BlockLength:
   Exclude:
     - spec/**/*_spec.rb
 
+Metrics/ClassLength:
+  CountAsOne:
+    - 'array'
+    - 'hash'
+    - 'heredoc'
+  Max: 150
+
 Metrics/MethodLength:
+  Max: 15
+  CountAsOne:
+    - 'array'
+    - 'hash'
+    - 'heredoc'
   IgnoredMethods:
     - build_ghost_command
     - mysql2_ghost_connection
 
 Metrics/ModuleLength:
+  CountAsOne:
+    - 'array'
+    - 'hash'
+    - 'heredoc'
   Exclude:
     - lib/ghost_adapter/config.rb
 
