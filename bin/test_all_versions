@@ -1,0 +1,36 @@
+#!/bin/bash
+
+separator_line() {
+  echo
+  echo "----------------------------------------------------------------------------------------------------------------------"
+}
+
+install_version() {
+  echo -e "\033[1;34mTesting against ActiveRecord ${1}\033[0m"
+  bundle install --gemfile "gemfiles/activerecord-${1}.Gemfile" --quiet
+}
+
+# 5.0
+separator_line
+install_version "5.0"
+bundle exec rspec "$@"
+
+# 5.1
+separator_line
+install_version "5.1"
+bundle exec rspec "$@"
+
+# 5.1
+separator_line
+install_version "5.2"
+bundle exec rspec "$@"
+
+# 6.0
+separator_line
+install_version "6.0"
+bundle exec rspec "$@"
+
+# 6.1
+separator_line
+install_version "6.1"
+bundle exec rspec "$@"

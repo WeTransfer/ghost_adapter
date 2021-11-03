@@ -4,6 +4,8 @@ require 'active_record/connection_adapters/abstract/connection_pool'
 RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
   let(:logger) { double(:logger, puts: true) }
   let(:mysql_client) { double('Mysql2::Client', query_options: {}, query: nil) }
+  let(:table) { :foo }
+  let(:column) { :bar_id }
 
   subject { described_class.new(mysql_client, logger, {}, {}) }
 
@@ -13,8 +15,6 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
 
   describe 'schema statements' do
     describe 'clean_query' do
-      let(:table_name) { 'foo' }
-
       it 'parses query correctly' do
         sql =
           'ADD index_type INDEX `bar_index_name` (`bar_id`), '\
@@ -25,56 +25,143 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           'ADD index_type INDEX baz_index_name (baz_id)'
 
         expect(GhostAdapter::Migrator).to receive(:execute)
-          .with(table_name, sanatized_sql, any_args)
+          .with(table.to_s, sanatized_sql, any_args)
 
-        subject.execute("ALTER TABLE #{table_name} #{sql}")
+        subject.execute("ALTER TABLE #{table} #{sql}")
       end
     end
 
-    describe '#add_index' do
-      let(:table_name) { :foo }
-      let(:column_name) { :bar_id }
-      let(:sql) { 'ADD index_type INDEX `index_name` (`bar_id`)' }
+    describe 're-defined ActiveRecord methods' do
+      before { allow(subject).to receive(:execute) }
 
-      before do
-        allow(subject).to(
-          receive(:add_index_options)
-          .with(table_name, column_name)
-          .and_return(['index_name', 'index_type', "`#{column_name}`"])
-        )
+      describe '#add_index' do
+        before { allow(subject).to receive(:execute) }
+
+        context 'with no options' do
+          it 'passes the correct SQL to #execute' do
+            subject.add_index(table, column)
+            expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` (`#{column}`)"
+          end
+        end
+
+        context 'with multiple columns' do
+          let(:col2) { :baz_id }
+
+          it 'passes the correct SQL to #execute' do
+            subject.add_index(table, [column, col2])
+            expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}_and_#{col2}` (`#{column}`, `#{col2}`)"
+          end
+
+          context 'with length option' do
+            let(:length1) { rand(20) }
+            let(:length2) { rand(20) }
+
+            it 'passes the correct SQL to #execute' do
+              subject.add_index(table, [column, col2], length: { column.to_s => length1, col2.to_s => length2 })
+              expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}_and_#{col2}` (`#{column}`(#{length1}), `#{col2}`(#{length2}))"
+            end
+          end
+        end
+
+        context 'with unique option true' do
+          it 'passes the correct SQL to #execute' do
+            subject.add_index(table, column, unique: true)
+            expect_sql "ALTER TABLE `#{table}` ADD UNIQUE INDEX `index_#{table}_on_#{column}` (`#{column}`)"
+          end
+        end
+
+        context 'with name option' do
+          let(:index_name) { 'index_name' }
+
+          it 'passes the correct SQL to #execute' do
+            subject.add_index(table, column, name: index_name)
+            expect_sql "ALTER TABLE `#{table}` ADD INDEX `#{index_name}` (`#{column}`)"
+          end
+        end
+
+        context 'with length option' do
+          let(:length) { rand(20) }
+
+          it 'passes the correct SQL to #execute' do
+            subject.add_index(table, column, length: length)
+            expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` (`#{column}`(#{length}))"
+          end
+        end
+
+        context 'with using option' do
+          let(:method) { 'btree' }
+
+          it 'passes the correct SQL to #execute' do
+            subject.add_index(table, column, using: method)
+            expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` USING #{method} (`#{column}`)"
+          end
+        end
+
+        context 'with type option' do
+          let(:type) { 'fulltext' }
+
+          it 'passes the correct SQL to #execute' do
+            subject.add_index(table, column, type: type)
+            expect_sql "ALTER TABLE `#{table}` ADD #{type.upcase} INDEX `index_#{table}_on_#{column}` (`#{column}`)"
+          end
+        end
       end
 
-      it 'passes the built SQL to #execute' do
-        expect(subject).to(
-          receive(:execute)
-          .with(
-            "ALTER TABLE `#{table_name}` ADD index_type INDEX `index_name` (`bar_id`)"
-          )
-        )
-        subject.add_index(table_name, column_name)
-      end
-    end
+      describe '#remove_index' do
+        let(:index_name) { 'index_name' }
 
-    describe '#remove_index' do
-      let(:table_name) { :foo }
-      let(:options) { { column: :bar_id } }
-      let(:sql) { 'DROP INDEX `index_name`' }
+        before do
+          # This must be mocked because the method tries to query the database to get the index name
+          allow(subject).to receive(:index_name_for_remove).and_return(index_name)
+        end
 
-      before do
-        allow(subject).to(
-          receive(:index_name_for_remove)
-          .with(table_name, nil, options)
-          .and_return('index_name')
-        )
-      end
+        context 'with column name passed as positional argument' do
+          it 'passes the correct SQL to #execute' do
+            subject.remove_index(table, column)
+            expect_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
+          end
+        end
 
-      it 'passes the built SQL to #execute' do
-        expect(subject).to(
-          receive(:execute)
-          .with("ALTER TABLE `#{table_name}` DROP INDEX `index_name`")
-        )
-        subject.remove_index(table_name, nil, options)
+        context 'with column name passed as keyword argument' do
+          it 'passes the correct SQL to #execute' do
+            subject.remove_index(table, column: column)
+            expect_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
+          end
+        end
+
+        context 'with index name passed as keyword argument' do
+          let(:index_name) { 'brand_new_index_name' }
+
+          it 'passes the correct SQL to #execute' do
+            subject.remove_index(table, name: index_name)
+            expect_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
+          end
+        end
+
+        context 'with if_exists property set false' do
+          context 'when index exists' do
+            before { allow(subject).to receive(:index_exists?).and_return(true) }
+
+            it 'passes the correct SQL to #execute' do
+              subject.remove_index(table, column, if_exists: true)
+              expect_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
+            end
+          end
+
+          context 'when index does not exist' do
+            before { allow(subject).to receive(:index_exists?).and_return(false) }
+
+            it 'does nothing' do
+              subject.remove_index(table, column, if_exists: true)
+              expect(subject).not_to have_received(:execute)
+            end
+          end
+        end
       end
     end
   end
+end
+
+def expect_sql(sql)
+  expect(subject).to have_received(:execute).with(sql)
 end
