@@ -39,9 +39,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: Install gems
-        run: |
-          gem install bundler
-          bundle install --gemfile ${{ matrix.gemfile }}
+        run: bundle install --gemfile ${{ matrix.gemfile }}
       - name: Run rubocop
         run: bundle exec rake rubocop
       - name: Run tests
