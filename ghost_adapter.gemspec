@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activerecord', '>= 5'
+  spec.add_dependency 'activerecord', '>= 5', '< 6.2'
   spec.add_dependency 'mysql2', '>= 0.4.0', '< 0.6.0'
 
   spec.add_development_dependency 'bump', '~> 0'
