@@ -25,13 +25,15 @@ jobs:
           - "gemfiles/activerecord-6.0.Gemfile"
           - "gemfiles/activerecord-6.1.Gemfile"
         exclude:
-          # Ruby 3 is not supported for ActiveRecord < 6
+          # Ruby 3 is not supported for ActiveRecord < 6.1
           - ruby-version: "3.0"
             gemfile: "gemfiles/activerecord-5.0.Gemfile"
           - ruby-version: "3.0"
             gemfile: "gemfiles/activerecord-5.1.Gemfile"
           - ruby-version: "3.0"
             gemfile: "gemfiles/activerecord-5.2.Gemfile"
+          - ruby-version: "3.0"
+            gemfile: "gemfiles/activerecord-6.0.Gemfile"
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby
