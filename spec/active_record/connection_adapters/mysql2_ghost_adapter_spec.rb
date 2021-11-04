@@ -2,6 +2,12 @@ require 'spec_helper'
 require 'active_record/connection_adapters/abstract/connection_pool'
 
 RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
+  matcher :execute_sql do |sql|
+    match do |adapter|
+      expect(adapter).to receive(:execute).with(sql)
+    end
+  end
+
   let(:logger) { double(:logger, puts: true) }
   let(:mysql_client) { double('Mysql2::Client', query_options: {}, query: nil) }
   let(:table) { :foo }
@@ -43,7 +49,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
       describe '#add_index' do
         context 'with no options' do
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` (`#{column}`)"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` (`#{column}`)"
             subject.add_index(table, column)
           end
         end
@@ -52,7 +58,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           let(:col2) { :baz_id }
 
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}_and_#{col2}` (`#{column}`, `#{col2}`)"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}_and_#{col2}` (`#{column}`, `#{col2}`)"
             subject.add_index(table, [column, col2])
           end
 
@@ -61,7 +67,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
             let(:length2) { rand(20) }
 
             it 'passes the correct SQL to #execute' do
-              expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}_and_#{col2}` (`#{column}`(#{length1}), `#{col2}`(#{length2}))"
+              expect(subject).to execute_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}_and_#{col2}` (`#{column}`(#{length1}), `#{col2}`(#{length2}))"
               subject.add_index(table, [column, col2], length: { column.to_s => length1, col2.to_s => length2 })
             end
           end
@@ -69,7 +75,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
 
         context 'with unique option true' do
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` ADD UNIQUE INDEX `index_#{table}_on_#{column}` (`#{column}`)"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` ADD UNIQUE INDEX `index_#{table}_on_#{column}` (`#{column}`)"
             subject.add_index(table, column, unique: true)
           end
         end
@@ -78,7 +84,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           let(:index_name) { 'index_name' }
 
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` ADD INDEX `#{index_name}` (`#{column}`)"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` ADD INDEX `#{index_name}` (`#{column}`)"
             subject.add_index(table, column, name: index_name)
           end
         end
@@ -87,7 +93,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           let(:length) { rand(20) }
 
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` (`#{column}`(#{length}))"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` (`#{column}`(#{length}))"
             subject.add_index(table, column, length: length)
           end
         end
@@ -96,7 +102,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           let(:method) { 'btree' }
 
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` USING #{method} (`#{column}`)"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` USING #{method} (`#{column}`)"
             subject.add_index(table, column, using: method)
           end
         end
@@ -105,7 +111,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           let(:type) { 'fulltext' }
 
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` ADD #{type.upcase} INDEX `index_#{table}_on_#{column}` (`#{column}`)"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` ADD #{type.upcase} INDEX `index_#{table}_on_#{column}` (`#{column}`)"
             subject.add_index(table, column, type: type)
           end
         end
@@ -121,14 +127,14 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
 
         context 'with column name passed as positional argument' do
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
             subject.remove_index(table, column)
           end
         end
 
         context 'with column name passed as keyword argument' do
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
             subject.remove_index(table, column: column)
           end
         end
@@ -137,7 +143,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           let(:index_name) { 'brand_new_index_name' }
 
           it 'passes the correct SQL to #execute' do
-            expect_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
+            expect(subject).to execute_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
             subject.remove_index(table, name: index_name)
           end
         end
@@ -149,7 +155,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
                 before { allow(subject).to receive(:index_exists?).and_return(true) }
 
                 it 'passes the correct SQL to #execute' do
-                  expect_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
+                  expect(subject).to execute_sql "ALTER TABLE `#{table}` DROP INDEX `#{index_name}`"
                   subject.remove_index(table, column, if_exists: true)
                 end
               end
@@ -168,8 +174,4 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
       end
     end
   end
-end
-
-def expect_sql(sql)
-  expect(subject).to receive(:execute).with(sql)
 end
