@@ -1,0 +1,18 @@
+#!/bin/bash
+
+test_version() {
+  local version=$(echo $1 | sed "s/[^0-9.]*//g")
+  echo
+  echo "----------------------------------------------------------------------------------------------------------------------"
+  echo -e "\033[1;34mTesting against ActiveRecord ${version}\033[0m"
+
+  local gemfile="${1}"
+  shift
+
+  bundle install --gemfile "${gemfile}" --quiet
+  bundle exec --gemfile "${gemfile}" rspec  "$@"
+}
+
+for gemfile in $(find gemfiles -type f -regex ".*\.Gemfile$"); do
+  test_version "${gemfile}"
+done
