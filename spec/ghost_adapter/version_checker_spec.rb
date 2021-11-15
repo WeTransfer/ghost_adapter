@@ -3,8 +3,8 @@ require 'ghost_adapter/version_checker'
 require 'open3'
 
 RSpec.describe GhostAdapter::VersionChecker do
-  let(:failed_process) { OpenStruct.new('success?' => false) }
-  let(:success_process) { OpenStruct.new('success?' => true) }
+  let(:failed_process) { instance_double('Process::Status', success?: false) }
+  let(:success_process) { instance_double('Process::Status', success?: true) }
 
   it 'raises an error if gh-ost is not installed' do
     expect(Open3).to receive(:capture2).and_return(['', failed_process])
