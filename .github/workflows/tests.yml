@@ -35,6 +35,11 @@ jobs:
             gemfile: "gemfiles/activerecord-5.2.Gemfile"
           - ruby-version: "3.0"
             gemfile: "gemfiles/activerecord-6.0.Gemfile"
+          # Ruby >= 2.7 is required for ActiveRecord >= 7
+          - ruby-version: "2.5"
+            gemfile: "gemfiles/activerecord-7.0.Gemfile"
+          - ruby-version: "2.6"
+            gemfile: "gemfiles/activerecord-7.0.Gemfile"
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby
