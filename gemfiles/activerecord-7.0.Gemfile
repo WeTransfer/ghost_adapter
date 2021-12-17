@@ -1,5 +1,5 @@
 source 'http://rubygems.org'
 
-gem 'activerecord', '~> 7.0.0.rc3'
+gem 'activerecord', '~> 7.0'
 
 gemspec path: '../'
