@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.4.1
+- Add support for ActiveRecord 7.0.1 ([#69](https://github.com/WeTransfer/ghost_adapter/pull/69))
+
 ## 0.4.0
 - Add support for ActiveRecord 7 ([#67](https://github.com/WeTransfer/ghost_adapter/pull/67))
 
