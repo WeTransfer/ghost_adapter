@@ -103,7 +103,7 @@ module ActiveRecord
       attr_reader :database, :dry_run
 
       ALTER_TABLE_PATTERN = /\AALTER\s+TABLE\W*(?<table_name>\w+)\W*(?<query>.*)$/i.freeze
-      QUERY_ALLOWABLE_CHARS = /[^0-9a-z_\s():'"{},]/i.freeze
+      QUERY_ALLOWABLE_CHARS = /[^0-9a-z_\s():'"{},`]/i.freeze
       CREATE_TABLE_PATTERN = /\Acreate\stable/i.freeze
       DROP_TABLE_PATTERN = /\Acreate\stable/i.freeze
       INSERT_SCHEMA_MIGRATION_PATTERN = /\Ainsert\sinto\s`schema_migrations`/i.freeze

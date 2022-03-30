@@ -31,8 +31,8 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
           'ADD index_type INDEX `baz_index_name` (`baz_id`);;;'
 
         sanatized_sql =
-          'ADD index_type INDEX bar_index_name (bar_id), '\
-          'ADD index_type INDEX baz_index_name (baz_id)'
+          'ADD index_type INDEX `bar_index_name` (`bar_id`), '\
+          'ADD index_type INDEX `baz_index_name` (`baz_id`)'
 
         expect(GhostAdapter::Migrator).to receive(:execute)
           .with(table.to_s, sanatized_sql, any_args)
