@@ -18,7 +18,7 @@ module ActiveRecord
       end
 
       client = Mysql2::Client.new(config)
-      if GhostAdapter::Internal.ghost_migration_enabeld?
+      if GhostAdapter::Internal.ghost_migration_enabled?
         dry_run = ENV['DRY_RUN'] == '1'
         GhostAdapter::VersionChecker.validate_executable! unless ENV['SKIP_GHOST_VERSION_CHECK'] == '1'
         ConnectionAdapters::Mysql2GhostAdapter.new(client, logger, nil, config, dry_run: dry_run)

@@ -43,7 +43,7 @@ module GhostAdapter
       @@ghost_migration_enabled = true # rubocop:disable Style/ClassVars
     end
 
-    def self.ghost_migration_enabeld?
+    def self.ghost_migration_enabled?
       env_val = ENV['GHOST_MIGRATE']&.downcase
       return false if %w[0 n no f false].include?(env_val)
 
