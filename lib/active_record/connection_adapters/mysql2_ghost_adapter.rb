@@ -92,7 +92,7 @@ module ActiveRecord
         end
       else
         def add_index(table_name, column_name, options = {})
-          index_name, index_type, index_columns, _index_options = add_index_options(table_name, column_name, options)
+          index_name, index_type, index_columns, _index_options = add_index_options(table_name, column_name, **options)
 
           sql = build_add_index_sql(
             table_name, index_columns, index_name,
