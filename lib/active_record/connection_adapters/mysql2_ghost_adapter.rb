@@ -42,11 +42,11 @@ module ActiveRecord
         @dry_run = dry_run
       end
 
-      # Only ALTER TABLE statements are automatically skipped by gh-ost
-      # We need to manually skip CREATE TABLE, DROP TABLE, and
-      # INSERT/DELETE (to schema migrations) for dry runs
       if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.0')
         def execute(sql, name = nil, async: false)
+          # Only ALTER TABLE statements are automatically skipped by gh-ost
+          # We need to manually skip CREATE TABLE, DROP TABLE, and
+          # INSERT/DELETE (to schema migrations) for dry runs
           return if dry_run && should_skip_for_dry_run?(sql)
 
           if (table, query = parse_sql(sql))
@@ -57,6 +57,7 @@ module ActiveRecord
         end
       else
         def execute(sql, name = nil)
+          # See comment above -- some tables need to be skipped manually for dry runs
           return if dry_run && should_skip_for_dry_run?(sql)
 
           if (table, query = parse_sql(sql))

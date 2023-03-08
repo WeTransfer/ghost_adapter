@@ -44,7 +44,7 @@ module GhostAdapter
     end
 
     def self.ghost_migration_enabled?
-      env_val = ENV.fetch('GHOST_MIGRATE', nil)&.downcase
+      env_val = ENV.fetch('GHOST_MIGRATE', 'false').downcase
       return false if %w[0 n no f false].include?(env_val)
 
       !!@@ghost_migration_enabled || %w[1 y yes t true].include?(env_val)
