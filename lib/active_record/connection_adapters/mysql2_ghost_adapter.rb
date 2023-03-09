@@ -18,9 +18,9 @@ module ActiveRecord
       end
 
       client = Mysql2::Client.new(config)
-      if GhostAdapter::Internal.ghost_migration_enabeld?
-        dry_run = ENV['DRY_RUN'] == '1'
-        GhostAdapter::VersionChecker.validate_executable! unless ENV['SKIP_GHOST_VERSION_CHECK'] == '1'
+      if GhostAdapter::Internal.ghost_migration_enabled?
+        dry_run = ENV.fetch('DRY_RUN', nil) == '1'
+        GhostAdapter::VersionChecker.validate_executable! unless ENV.fetch('SKIP_GHOST_VERSION_CHECK', nil) == '1'
         ConnectionAdapters::Mysql2GhostAdapter.new(client, logger, nil, config, dry_run: dry_run)
       else
         ConnectionAdapters::Mysql2Adapter.new(client, logger, nil, config)
@@ -42,16 +42,29 @@ module ActiveRecord
         @dry_run = dry_run
       end
 
-      def execute(sql, name = nil)
-        # Only ALTER TABLE statements are automatically skipped by gh-ost
-        # We need to manually skip CREATE TABLE, DROP TABLE, and
-        # INSERT/DELETE (to schema migrations) for dry runs
-        return if dry_run && should_skip_for_dry_run?(sql)
+      if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.0')
+        def execute(sql, name = nil, async: false)
+          # Only ALTER TABLE statements are automatically skipped by gh-ost
+          # We need to manually skip CREATE TABLE, DROP TABLE, and
+          # INSERT/DELETE (to schema migrations) for dry runs
+          return if dry_run && should_skip_for_dry_run?(sql)
 
-        if (table, query = parse_sql(sql))
-          GhostAdapter::Migrator.execute(table, query, database, dry_run)
-        else
-          super(sql, name)
+          if (table, query = parse_sql(sql))
+            GhostAdapter::Migrator.execute(table, query, database, dry_run)
+          else
+            super(sql, name, async: async)
+          end
+        end
+      else
+        def execute(sql, name = nil)
+          # See comment above -- some tables need to be skipped manually for dry runs
+          return if dry_run && should_skip_for_dry_run?(sql)
+
+          if (table, query = parse_sql(sql))
+            GhostAdapter::Migrator.execute(table, query, database, dry_run)
+          else
+            super(sql, name)
+          end
         end
       end
 
@@ -80,7 +93,7 @@ module ActiveRecord
         end
       else
         def add_index(table_name, column_name, options = {})
-          index_name, index_type, index_columns, _index_options = add_index_options(table_name, column_name, options)
+          index_name, index_type, index_columns, _index_options = add_index_options(table_name, column_name, **options)
 
           sql = build_add_index_sql(
             table_name, index_columns, index_name,

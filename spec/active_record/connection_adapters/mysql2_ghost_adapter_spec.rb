@@ -27,11 +27,11 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
     describe 'clean_query' do
       it 'parses query correctly' do
         sql =
-          'ADD index_type INDEX `bar_index_name` (`bar_id`), '\
+          'ADD index_type INDEX `bar_index_name` (`bar_id`), ' \
           'ADD index_type INDEX `baz_index_name` (`baz_id`);;;'
 
         sanatized_sql =
-          'ADD index_type INDEX `bar_index_name` (`bar_id`), '\
+          'ADD index_type INDEX `bar_index_name` (`bar_id`), ' \
           'ADD index_type INDEX `baz_index_name` (`baz_id`)'
 
         expect(GhostAdapter::Migrator).to receive(:execute)

@@ -5,7 +5,7 @@ require 'active_record/connection_adapters/mysql2_ghost_adapter'
 
 require 'ghost_adapter/config'
 
-require 'ghost_adapter/railtie' if defined? ::Rails::Railtie
+require 'ghost_adapter/railtie' if defined? Rails::Railtie
 
 module GhostAdapter
   def self.config
@@ -43,8 +43,8 @@ module GhostAdapter
       @@ghost_migration_enabled = true # rubocop:disable Style/ClassVars
     end
 
-    def self.ghost_migration_enabeld?
-      env_val = ENV['GHOST_MIGRATE']&.downcase
+    def self.ghost_migration_enabled?
+      env_val = ENV.fetch('GHOST_MIGRATE', 'false').downcase
       return false if %w[0 n no f false].include?(env_val)
 
       !!@@ghost_migration_enabled || %w[1 y yes t true].include?(env_val)

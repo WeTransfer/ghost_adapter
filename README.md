@@ -62,6 +62,16 @@ If you have used the rails generator, you can set the variable to a falsey value
 - "truthy" values: `[1, t, true, y, yes]`
 - "falsey" values: `[0, f, false, n, no]`
 
+### Running tests
+
+To run the tests for all versions, run this script:
+
+``` shell
+bin/test_all_versions
+```
+
+Make sure to use the appropriate Ruby version! ActiveRecord <6.0 is not compatible with Ruby 3, so specs for those versions will only run successfully in a Ruby 2 environment.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/wetransfer/ghost_adapter. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](./CODE_OF_CONDUCT.md).
