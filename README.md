@@ -66,7 +66,7 @@ If you have used the rails generator, you can set the variable to a falsey value
 
 To run the tests for all versions, run this script:
 
-``` shell
+```shell
 bin/test_all_versions
 ```
 
@@ -76,6 +76,28 @@ Make sure to use the appropriate Ruby version! ActiveRecord <6.0 is not compatib
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/wetransfer/ghost_adapter. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](./CODE_OF_CONDUCT.md).
 Please add your name to the [CONTRIBUTORS.md](./CONTRIBUTORS.md)
+
+## Releasing
+
+### Updating version
+
+Before releasing, make sure the version is updated appropriately. This can be done with:
+
+```shell
+bundle exec bump [major|minor|patch]
+```
+
+You should (at least roughly) follow [semver rules](https://semver.org/) for version updates.
+
+### Publishing
+
+Upon each version update, the new gem should be published to rubygems.org. This can be done with:
+
+```shell
+bundle exec rake release
+```
+
+This will ask you to authenticate to rubygems.org. If you have need credentials, please reach out to one of the [contributors](./CONTRIBUTORS.md)
 
 ## License
 
