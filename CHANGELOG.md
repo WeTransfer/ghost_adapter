@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.7.0
+- Chore: add short docs for how to release the gem ([#76](https://github.com/WeTransfer/ghost_adapter/pull/76))
+- Update activerecord requirement from >= 5, <= 7.2 to >= 5, <= 8.1 ([#78](https://github.com/WeTransfer/ghost_adapter/pull/78))
+- Add support for gh-ost v1.1.6 command line flags and drop deprecated flag ([#79](https://github.com/WeTransfer/ghost_adapter/pull/79))
+
+## 0.6.0
+- Update activerecord requirement from >= 5, <= 7.1 to >= 5, <= 7.2 ([#75](https://github.com/WeTransfer/ghost_adapter/pull/75))
+
+## 0.5.0
+- Add support for optional async argument ([#72](https://github.com/WeTransfer/ghost_adapter/pull/72))
+
+## 0.4.2
+- Allow backticks in gh-ost query ([#71](https://github.com/WeTransfer/ghost_adapter/pull/71))
+
 ## 0.4.1
 - Add support for ActiveRecord 7.0.1 ([#69](https://github.com/WeTransfer/ghost_adapter/pull/69))
 

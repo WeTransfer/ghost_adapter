@@ -5,10 +5,13 @@ module GhostAdapter
                    allow_master_master
                    allow_nullable_unique_key
                    allow_on_master
+                   allow_zero_in_date
                    approve_renamed_columns
                    assume_master_host
                    assume_rbr
+                   attempt_instant_ddl
                    azure
+                   binlogsyncer_max_reconnect_attempts
                    check_flag
                    chunk_size
                    concurrent_rowcount
@@ -54,7 +57,6 @@ module GhostAdapter
                    postpone_cut_over_flag_file
                    quiet
                    replica_server_id
-                   replication_lag_query
                    serve_socket_file
                    serve_tcp_port
                    skip_foreign_key_checks
@@ -73,6 +75,8 @@ module GhostAdapter
                    throttle_control_replicas
                    throttle_flag_file
                    throttle_http
+                   throttle_http_interval_millis
+                   throttle_http_timeout_millis
                    throttle_query
                    timestamp_old_table
                    tungsten

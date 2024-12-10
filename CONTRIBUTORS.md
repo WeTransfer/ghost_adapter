@@ -1,3 +1,4 @@
 - @acroos (Austin C. Roos, austin.roos@wetransfer.com)
 - @grdw (Gerard Westerhof, gerard@wetransfer.com)
 - @epintos (Esteban Pintos, esteban.pintos@wetransfer.com)
+- @nickdowse (Nick Dowse, nick.dowse@wetransfer.com)
