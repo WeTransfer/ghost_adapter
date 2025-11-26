@@ -3,17 +3,17 @@ ruby = "3.3.10"
 
 [tasks.install]
 alias = "i"
-run = "bundle install"
+run = "bundle install --gemfile gemfiles/activerecord-7.0.Gemfile"
 
 [tasks.test]
-run = "bundle install --gemfile gemfiles/activerecord-7.0.Gemfile --quiet && bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec"
+run = "bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec"
 
 [tasks.console]
 alias = "c"
 run = "bin/console"
 
 [tasks.lint]
-run = "bundle exec rubocop -A"
+run = "bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rubocop -A"
 
 # Test with Ruby 2.7.8 (ActiveRecord 5.0, 5.1, 5.2 only)
 [tasks."test:ruby27"]
@@ -57,10 +57,7 @@ run = '''
 
 # Test with Ruby 3.3.10 (ActiveRecord 7.0 only - AR 6.1 has Logger compatibility issues)
 [tasks."test:ruby33"]
-run = '''
-  bundle install --gemfile gemfiles/activerecord-7.0.Gemfile --quiet && \
-  bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec
-'''
+run = "bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec"
 
 # Test all supported Ruby versions
 [tasks."test:all"]
