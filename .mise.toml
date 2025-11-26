@@ -1,0 +1,67 @@
+[tools]
+ruby = "3.3.10"
+
+[tasks.install]
+alias = "i"
+run = "bundle install"
+
+[tasks.test]
+run = "bundle install --gemfile gemfiles/activerecord-7.0.Gemfile --quiet && bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec"
+
+[tasks.console]
+alias = "c"
+run = "bin/console"
+
+[tasks.lint]
+run = "bundle exec rubocop -A"
+
+# Test with Ruby 2.7.8 (ActiveRecord 5.0, 5.1, 5.2 only)
+[tasks."test:ruby27"]
+env = { GEM_HOME = "{{config_root}}/.gems/ruby-2.7", GEM_PATH = "{{config_root}}/.gems/ruby-2.7" }
+run = '''
+  mise x ruby@2.7.8 -- gem install bundler --no-document --conservative && \
+  mise x ruby@2.7.8 -- bundle install --gemfile gemfiles/activerecord-5.0.Gemfile --quiet && \
+  mise x ruby@2.7.8 -- bundle exec --gemfile gemfiles/activerecord-5.0.Gemfile rspec && \
+  mise x ruby@2.7.8 -- bundle install --gemfile gemfiles/activerecord-5.1.Gemfile --quiet && \
+  mise x ruby@2.7.8 -- bundle exec --gemfile gemfiles/activerecord-5.1.Gemfile rspec && \
+  mise x ruby@2.7.8 -- bundle install --gemfile gemfiles/activerecord-5.2.Gemfile --quiet && \
+  mise x ruby@2.7.8 -- bundle exec --gemfile gemfiles/activerecord-5.2.Gemfile rspec
+'''
+
+# Test with Ruby 3.0.2 (ActiveRecord 7.0 only - AR 6.1 has Logger compatibility issues)
+[tasks."test:ruby30"]
+env = { GEM_HOME = "{{config_root}}/.gems/ruby-3.0", GEM_PATH = "{{config_root}}/.gems/ruby-3.0" }
+run = '''
+  mise x ruby@3.0 -- gem install bundler --no-document --conservative && \
+  mise x ruby@3.0 -- bundle install --gemfile gemfiles/activerecord-7.0.Gemfile --quiet && \
+  mise x ruby@3.0 -- bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec
+'''
+
+# Test with Ruby 3.1.7 (ActiveRecord 7.0 only - AR 6.1 has Logger compatibility issues)
+[tasks."test:ruby31"]
+env = { GEM_HOME = "{{config_root}}/.gems/ruby-3.1", GEM_PATH = "{{config_root}}/.gems/ruby-3.1" }
+run = '''
+  mise x ruby@3.1.7 -- gem install bundler --no-document --conservative && \
+  mise x ruby@3.1.7 -- bundle install --gemfile gemfiles/activerecord-7.0.Gemfile --quiet && \
+  mise x ruby@3.1.7 -- bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec
+'''
+
+# Test with Ruby 3.2.9 (ActiveRecord 7.0 only - AR 6.1 has Logger compatibility issues)
+[tasks."test:ruby32"]
+env = { GEM_HOME = "{{config_root}}/.gems/ruby-3.2", GEM_PATH = "{{config_root}}/.gems/ruby-3.2" }
+run = '''
+  mise x ruby@3.2.9 -- gem install bundler --no-document --conservative && \
+  mise x ruby@3.2.9 -- bundle install --gemfile gemfiles/activerecord-7.0.Gemfile --quiet && \
+  mise x ruby@3.2.9 -- bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec
+'''
+
+# Test with Ruby 3.3.10 (ActiveRecord 7.0 only - AR 6.1 has Logger compatibility issues)
+[tasks."test:ruby33"]
+run = '''
+  bundle install --gemfile gemfiles/activerecord-7.0.Gemfile --quiet && \
+  bundle exec --gemfile gemfiles/activerecord-7.0.Gemfile rspec
+'''
+
+# Test all supported Ruby versions
+[tasks."test:all"]
+run = "mise run test:ruby27 && mise run test:ruby30 && mise run test:ruby31 && mise run test:ruby32 && mise run test:ruby33"

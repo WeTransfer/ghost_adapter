@@ -14,3 +14,9 @@
 **/*Gemfile.lock
 .ruby-version
 .ruby-gemset
+
+# Store gems for different ruby versions
+.gems
+
+# IDE
+.idea
