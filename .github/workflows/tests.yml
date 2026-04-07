@@ -41,9 +41,9 @@ jobs:
           - ruby-version: "2.6"
             gemfile: "gemfiles/activerecord-7.0.Gemfile"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
       - name: Install gems
