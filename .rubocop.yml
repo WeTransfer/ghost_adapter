@@ -7,6 +7,12 @@ Style/Documentation:
 Style/RescueModifier:
   Enabled: false
 
+Style/SuperArguments:
+  Enabled: false
+
+Lint/UselessConstantScoping:
+  Enabled: false
+
 Layout/LineLength:
   Exclude:
     - spec/**/*_spec.rb
@@ -28,7 +34,7 @@ Metrics/MethodLength:
     - 'array'
     - 'hash'
     - 'heredoc'
-  IgnoredMethods:
+  AllowedMethods:
     - build_ghost_command
     - mysql2_ghost_connection
 
@@ -41,12 +47,12 @@ Metrics/ModuleLength:
     - lib/ghost_adapter/config.rb
 
 Metrics/AbcSize:
-  IgnoredMethods:
+  AllowedMethods:
     - build_ghost_command
     - mysql2_ghost_connection
 
 Metrics/PerceivedComplexity:
-  IgnoredMethods:
+  AllowedMethods:
     - mysql2_ghost_connection
 
 AllCops:
