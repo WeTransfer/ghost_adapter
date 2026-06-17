@@ -52,7 +52,7 @@ module ActiveRecord
           if (table, query = parse_sql(sql))
             GhostAdapter::Migrator.execute(table, query, database, dry_run)
           else
-            super(sql, name, async: async)
+            super
           end
         end
       else
@@ -63,7 +63,7 @@ module ActiveRecord
           if (table, query = parse_sql(sql))
             GhostAdapter::Migrator.execute(table, query, database, dry_run)
           else
-            super(sql, name)
+            super
           end
         end
       end
@@ -121,6 +121,8 @@ module ActiveRecord
       DROP_TABLE_PATTERN = /\Acreate\stable/i.freeze
       INSERT_SCHEMA_MIGRATION_PATTERN = /\Ainsert\sinto\s`schema_migrations`/i.freeze
       DROP_SCHEMA_MIGRATION_PATTERN = /\Adelete\sfrom\s`schema_migrations`/i.freeze
+      private_constant :ALTER_TABLE_PATTERN, :QUERY_ALLOWABLE_CHARS, :CREATE_TABLE_PATTERN,
+                       :DROP_TABLE_PATTERN, :INSERT_SCHEMA_MIGRATION_PATTERN, :DROP_SCHEMA_MIGRATION_PATTERN
 
       def parse_sql(sql)
         capture = sql.match(ALTER_TABLE_PATTERN)

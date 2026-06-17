@@ -17,6 +17,12 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
 
   before do
     allow(mysql_client).to receive(:server_info).and_return({ id: 50_732, version: '5.7.32-log' })
+    # Recent ActiveRecord patches verify the raw connection's liveness while
+    # building statements. The real Mysql2::Client answers the whole
+    # ping/closed?/close protocol, so the double must too.
+    allow(mysql_client).to receive(:ping).and_return(true)
+    allow(mysql_client).to receive(:closed?).and_return(false)
+    allow(mysql_client).to receive(:close)
     if Gem.loaded_specs['activerecord'].version < Gem::Version.new('6.1')
       allow(mysql_client).to receive(:escape).with(table.to_s).and_return(table.to_s)
       allow(mysql_client).to receive(:more_results?)
