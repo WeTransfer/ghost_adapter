@@ -8,6 +8,10 @@ on:
   schedule:
     - cron:  '45 */6 * * *'
 
+# The workflow only needs to read the repository to test and lint it.
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
