@@ -1,0 +1,8 @@
+source 'https://rubygems.org'
+
+# Dedicated bundle for the lint job. It deliberately does NOT pull in the
+# gemspec (and therefore activerecord/mysql2), so linting needs no native
+# builds and is independent of the test matrix's Ruby/ActiveRecord versions.
+# Pinned to a single minor so new RuboCop releases land as deliberate upgrades
+# instead of breaking scheduled runs.
+gem 'rubocop', '~> 1.87.0'

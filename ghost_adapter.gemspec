@@ -31,5 +31,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'byebug', '~> 11.1'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3'
-  spec.add_development_dependency 'rubocop', '~> 1'
+  # RuboCop is intentionally not listed here: it is version-sensitive to the
+  # Ruby being used, which conflicts with the Ruby 2.5-3.0 test matrix. It runs
+  # in a dedicated lint job on a single modern Ruby (see gemfiles/rubocop.gemfile
+  # and .github/workflows/tests.yml).
 end
