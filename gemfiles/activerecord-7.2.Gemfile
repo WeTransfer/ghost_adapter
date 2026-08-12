@@ -1,7 +1,8 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
-# Specify the gem's runtime dependencies in ghost_adapter.gemspec.
-gemspec
+gem 'activerecord', '~> 7.2.0'
+
+gemspec path: '../'
 
 gem 'bump', '~> 0'
 gem 'byebug', '~> 11.1'

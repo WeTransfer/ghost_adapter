@@ -11,44 +11,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby-version:
-          - "2.5"
-          - "2.6"
-          - "2.7"
-          - "3.0"
-        gemfile:
-          - "gemfiles/activerecord-5.0.Gemfile"
-          - "gemfiles/activerecord-5.1.Gemfile"
-          - "gemfiles/activerecord-5.2.Gemfile"
-          - "gemfiles/activerecord-6.0.Gemfile"
-          - "gemfiles/activerecord-6.1.Gemfile"
-          - "gemfiles/activerecord-7.0.Gemfile"
-        exclude:
-          # Ruby 3 is not supported for ActiveRecord < 6.1
-          - ruby-version: "3.0"
-            gemfile: "gemfiles/activerecord-5.0.Gemfile"
-          - ruby-version: "3.0"
-            gemfile: "gemfiles/activerecord-5.1.Gemfile"
-          - ruby-version: "3.0"
-            gemfile: "gemfiles/activerecord-5.2.Gemfile"
-          - ruby-version: "3.0"
-            gemfile: "gemfiles/activerecord-6.0.Gemfile"
-          # Ruby >= 2.7 is required for ActiveRecord >= 7
-          - ruby-version: "2.5"
-            gemfile: "gemfiles/activerecord-7.0.Gemfile"
-          - ruby-version: "2.6"
-            gemfile: "gemfiles/activerecord-7.0.Gemfile"
+
     steps:
       - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
       - name: Set up Ruby
         uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1
         with:
-          ruby-version: ${{ matrix.ruby-version }}
+          ruby-version: "3.2"
       - name: Install gems
-        run: bundle install --gemfile ${{ matrix.gemfile }}
+        run: BUNDLE_GEMFILE=gemfiles/activerecord-7.2.Gemfile bundle install
       - name: Run rubocop
-        run: bundle exec rake rubocop
+        run: BUNDLE_GEMFILE=gemfiles/activerecord-7.2.Gemfile bundle exec rake rubocop
       - name: Run tests
-        run: bundle exec --gemfile ${{ matrix.gemfile }} rspec
+        run: BUNDLE_GEMFILE=gemfiles/activerecord-7.2.Gemfile bundle exec rspec

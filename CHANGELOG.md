@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.0.0
+- Breaking: support Rails 7.2 (`activerecord >= 7.2, < 8.0`) and Ruby >= 3.1.
+- Remove Rails <= 7.1 compatibility paths and route the Rails 7.2 adapter through registration.
+- Defer gh-ost validation until the first migration and protect dry-run schema migration writes.
+
 ## 0.7.0
 - Chore: add short docs for how to release the gem ([#76](https://github.com/WeTransfer/ghost_adapter/pull/76))
 - Update activerecord requirement from >= 5, <= 7.2 to >= 5, <= 8.1 ([#78](https://github.com/WeTransfer/ghost_adapter/pull/78))

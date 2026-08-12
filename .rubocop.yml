@@ -28,9 +28,8 @@ Metrics/MethodLength:
     - 'array'
     - 'hash'
     - 'heredoc'
-  IgnoredMethods:
+  AllowedMethods:
     - build_ghost_command
-    - mysql2_ghost_connection
 
 Metrics/ModuleLength:
   CountAsOne:
@@ -41,15 +40,10 @@ Metrics/ModuleLength:
     - lib/ghost_adapter/config.rb
 
 Metrics/AbcSize:
-  IgnoredMethods:
+  AllowedMethods:
     - build_ghost_command
-    - mysql2_ghost_connection
-
-Metrics/PerceivedComplexity:
-  IgnoredMethods:
-    - mysql2_ghost_connection
 
 AllCops:
   SuggestExtensions: false
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.1
   NewCops: enable

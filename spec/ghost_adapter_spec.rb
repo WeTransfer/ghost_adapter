@@ -48,8 +48,8 @@ RSpec.describe GhostAdapter do
 
     context 'with hash arguments and block' do
       it 'overrides hash values with block values for same key' do
-        hash_keys = GhostAdapter::CONFIG_KEYS.take(2).map { |k| [k, true] }.to_h
-        block_keys = GhostAdapter::CONFIG_KEYS.take(2).map { |k| [k, false] }.to_h
+        hash_keys = GhostAdapter::CONFIG_KEYS.take(2).to_h { |key| [key, true] }
+        block_keys = GhostAdapter::CONFIG_KEYS.take(2).to_h { |key| [key, false] }
 
         described_class.setup(hash_keys) do |config|
           block_keys.each do |k, v|

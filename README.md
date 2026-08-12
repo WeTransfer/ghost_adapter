@@ -2,7 +2,6 @@
 
 ![ghost](./doc/images/ghost.png)
 
-[![Gem](https://img.shields.io/gem/v/ghost_adapter)](https://rubygems.org/gems/ghost_adapter)
 ![GitHub Actions Workflow](https://github.com/WeTransfer/ghost_adapter/actions/workflows/tests.yml/badge.svg)
 [![Hippocratic License](https://img.shields.io/badge/license-Hippocratic-green)](https://github.com/WeTransfer/ghost_adapter/blob/main/LICENSE.md)
 [![gh-ost version](https://img.shields.io/badge/gh--ost%20version-1.1.1-blue)](https://github.com/github/gh-ost/releases/latest)
@@ -64,13 +63,9 @@ If you have used the rails generator, you can set the variable to a falsey value
 
 ### Running tests
 
-To run the tests for all versions, run this script:
-
 ```shell
-bin/test_all_versions
+BUNDLE_GEMFILE=gemfiles/activerecord-7.2.Gemfile bundle exec rspec
 ```
-
-Make sure to use the appropriate Ruby version! ActiveRecord <6.0 is not compatible with Ruby 3, so specs for those versions will only run successfully in a Ruby 2 environment.
 
 ## Contributing
 
@@ -91,13 +86,13 @@ You should (at least roughly) follow [semver rules](https://semver.org/) for ver
 
 ### Publishing
 
-Upon each version update, the new gem should be published to rubygems.org. This can be done with:
+Upon each version update, the new gem should be published. This can be done with:
 
 ```shell
 bundle exec rake release
 ```
 
-This will ask you to authenticate to rubygems.org. If you have need credentials, please reach out to one of the [contributors](./CONTRIBUTORS.md)
+This will ask you to authenticate. If you need credentials, please reach out to one of the [contributors](./CONTRIBUTORS.md)
 
 ## License
 
