@@ -28,6 +28,7 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
       allow(mysql_client).to receive(:close)
     end
     if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.2')
+      allow(GhostAdapter::VersionChecker).to receive(:validate_executable!)
       # AR 7.2's NullPool#server_version memoizes via a non-reentrant Mutex, which
       # deadlocks when a lone-connection double drives the real version lookup
       allow(subject).to receive(:supports_index_sort_order?).and_return(false)
@@ -232,6 +233,50 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
 
           expect(connection).to be_a(described_class)
           expect(connection.send(:database)).to eq('my_db')
+        end
+      end
+
+      describe '#initialize' do
+        def new_adapter_connection
+          config = ActiveRecord::DatabaseConfigurations::HashConfig.new(
+            'test', 'primary', { adapter: 'mysql2_ghost', database: 'my_db' }
+          )
+          config.new_connection
+        end
+
+        around do |example|
+          original_skip = ENV.fetch('SKIP_GHOST_VERSION_CHECK', nil)
+          original_dry_run = ENV.fetch('DRY_RUN', nil)
+          example.run
+          ENV['SKIP_GHOST_VERSION_CHECK'] = original_skip
+          ENV['DRY_RUN'] = original_dry_run
+        end
+
+        context 'when ghost migration is enabled and SKIP_GHOST_VERSION_CHECK is not set' do
+          before { ENV['SKIP_GHOST_VERSION_CHECK'] = nil }
+
+          it 'validates the gh-ost executable' do
+            expect(GhostAdapter::VersionChecker).to receive(:validate_executable!)
+            new_adapter_connection
+          end
+        end
+
+        context 'when SKIP_GHOST_VERSION_CHECK is set to 1' do
+          before { ENV['SKIP_GHOST_VERSION_CHECK'] = '1' }
+
+          it 'does not validate the gh-ost executable' do
+            expect(GhostAdapter::VersionChecker).not_to receive(:validate_executable!)
+            new_adapter_connection
+          end
+        end
+
+        context 'when DRY_RUN is set to 1' do
+          before { ENV['DRY_RUN'] = '1' }
+
+          it 'sets dry_run to true' do
+            connection = new_adapter_connection
+            expect(connection.send(:dry_run)).to be true
+          end
         end
       end
 

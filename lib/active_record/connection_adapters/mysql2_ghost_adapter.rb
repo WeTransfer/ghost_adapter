@@ -41,7 +41,10 @@ module ActiveRecord
           super(connection, logger, connection_options, config)
           config = connection if connection.is_a?(Hash)
           @database = config[:database]
-          @dry_run = dry_run
+          if GhostAdapter::Internal.ghost_migration_enabled? && ENV.fetch('SKIP_GHOST_VERSION_CHECK', nil) != '1'
+            GhostAdapter::VersionChecker.validate_executable!
+          end
+          @dry_run = dry_run || ENV.fetch('DRY_RUN', nil) == '1'
         end
       else
         def initialize(connection, logger, connection_options, config, dry_run: false)
