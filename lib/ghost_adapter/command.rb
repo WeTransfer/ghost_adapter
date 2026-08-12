@@ -22,6 +22,7 @@ module GhostAdapter
     private
 
     EXECUTABLE = 'gh-ost'.freeze
+    private_constant :EXECUTABLE
 
     attr_reader :alter, :database, :table, :dry_run
 
