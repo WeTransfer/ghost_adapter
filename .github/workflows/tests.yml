@@ -18,6 +18,7 @@ jobs:
           - "2.6"
           - "2.7"
           - "3.0"
+          - "3.1"
         gemfile:
           - "gemfiles/activerecord-5.0.Gemfile"
           - "gemfiles/activerecord-5.1.Gemfile"
@@ -25,6 +26,8 @@ jobs:
           - "gemfiles/activerecord-6.0.Gemfile"
           - "gemfiles/activerecord-6.1.Gemfile"
           - "gemfiles/activerecord-7.0.Gemfile"
+          - "gemfiles/activerecord-7.1.Gemfile"
+          - "gemfiles/activerecord-7.2.Gemfile"
         exclude:
           # Ruby 3 is not supported for ActiveRecord < 6.1
           - ruby-version: "3.0"
@@ -40,6 +43,34 @@ jobs:
             gemfile: "gemfiles/activerecord-7.0.Gemfile"
           - ruby-version: "2.6"
             gemfile: "gemfiles/activerecord-7.0.Gemfile"
+          - ruby-version: "2.5"
+            gemfile: "gemfiles/activerecord-7.1.Gemfile"
+          - ruby-version: "2.6"
+            gemfile: "gemfiles/activerecord-7.1.Gemfile"
+          # Ruby >= 3.1 is required for ActiveRecord >= 7.2
+          - ruby-version: "2.5"
+            gemfile: "gemfiles/activerecord-7.2.Gemfile"
+          - ruby-version: "2.6"
+            gemfile: "gemfiles/activerecord-7.2.Gemfile"
+          - ruby-version: "2.7"
+            gemfile: "gemfiles/activerecord-7.2.Gemfile"
+          - ruby-version: "3.0"
+            gemfile: "gemfiles/activerecord-7.2.Gemfile"
+          # Ruby 3.1 is only exercised against ActiveRecord 7.2
+          - ruby-version: "3.1"
+            gemfile: "gemfiles/activerecord-5.0.Gemfile"
+          - ruby-version: "3.1"
+            gemfile: "gemfiles/activerecord-5.1.Gemfile"
+          - ruby-version: "3.1"
+            gemfile: "gemfiles/activerecord-5.2.Gemfile"
+          - ruby-version: "3.1"
+            gemfile: "gemfiles/activerecord-6.0.Gemfile"
+          - ruby-version: "3.1"
+            gemfile: "gemfiles/activerecord-6.1.Gemfile"
+          - ruby-version: "3.1"
+            gemfile: "gemfiles/activerecord-7.0.Gemfile"
+          - ruby-version: "3.1"
+            gemfile: "gemfiles/activerecord-7.1.Gemfile"
     steps:
       - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
       - name: Set up Ruby
