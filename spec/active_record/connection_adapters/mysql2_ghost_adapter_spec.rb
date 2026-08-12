@@ -16,10 +16,22 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
   subject { described_class.new(mysql_client, logger, {}, {}) }
 
   before do
+    allow(GhostAdapter::Internal).to receive(:ghost_migration_enabled?).and_return(true)
     allow(mysql_client).to receive(:server_info).and_return({ id: 50_732, version: '5.7.32-log' })
     if Gem.loaded_specs['activerecord'].version < Gem::Version.new('6.1')
       allow(mysql_client).to receive(:escape).with(table.to_s).and_return(table.to_s)
       allow(mysql_client).to receive(:more_results?)
+    end
+    if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.1')
+      allow(mysql_client).to receive(:closed?).and_return(false)
+      allow(mysql_client).to receive(:ping).and_return(true)
+      allow(mysql_client).to receive(:close)
+    end
+    if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.2')
+      allow(GhostAdapter::VersionChecker).to receive(:validate_executable!)
+      # AR 7.2's NullPool#server_version memoizes via a non-reentrant Mutex, which
+      # deadlocks when a lone-connection double drives the real version lookup
+      allow(subject).to receive(:supports_index_sort_order?).and_return(false)
     end
   end
 
@@ -169,6 +181,137 @@ RSpec.describe ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter do
                 end
               end
             end
+          end
+        end
+      end
+    end
+  end
+
+  describe 'bug fixes' do
+    describe 'DROP_TABLE_PATTERN' do
+      it 'matches DROP TABLE statements' do
+        expect(subject.send(:create_or_drop_table?, 'DROP TABLE `foo`')).to be_truthy
+      end
+    end
+
+    describe '#execute keyword argument' do
+      it 'declares the keyword accepted by the underlying activerecord version' do
+        parameters = described_class.instance_method(:execute).parameters
+
+        if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.1')
+          expect(parameters).to include(%i[key allow_retry])
+          expect(parameters).not_to include(%i[key async])
+        elsif Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.0')
+          expect(parameters).to include(%i[key async])
+        end
+      end
+
+      if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.0')
+        it 'passes a non-ALTER TABLE statement through without raising' do
+          allow(mysql_client).to receive(:close)
+          allow(mysql_client).to receive(:abandon_results!)
+
+          expect { subject.execute('SELECT 1') }.not_to raise_error
+        end
+      end
+    end
+  end
+
+  if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.2')
+    describe 'ActiveRecord >= 7.2 support' do
+      describe 'adapter registration' do
+        it 'registers itself with ActiveRecord::ConnectionAdapters' do
+          expect(ActiveRecord::ConnectionAdapters.resolve('mysql2_ghost')).to eq(described_class)
+        end
+
+        it 'instantiates via ActiveRecord::DatabaseConfigurations::HashConfig#new_connection' do
+          config = ActiveRecord::DatabaseConfigurations::HashConfig.new(
+            'test', 'primary', { adapter: 'mysql2_ghost', database: 'my_db' }
+          )
+
+          connection = config.new_connection
+
+          expect(connection).to be_a(described_class)
+          expect(connection.send(:database)).to eq('my_db')
+        end
+      end
+
+      describe '#initialize' do
+        def new_adapter_connection
+          config = ActiveRecord::DatabaseConfigurations::HashConfig.new(
+            'test', 'primary', { adapter: 'mysql2_ghost', database: 'my_db' }
+          )
+          config.new_connection
+        end
+
+        around do |example|
+          original_skip = ENV.fetch('SKIP_GHOST_VERSION_CHECK', nil)
+          original_dry_run = ENV.fetch('DRY_RUN', nil)
+          example.run
+          ENV['SKIP_GHOST_VERSION_CHECK'] = original_skip
+          ENV['DRY_RUN'] = original_dry_run
+        end
+
+        context 'when ghost migration is enabled and SKIP_GHOST_VERSION_CHECK is not set' do
+          before { ENV['SKIP_GHOST_VERSION_CHECK'] = nil }
+
+          it 'validates the gh-ost executable' do
+            expect(GhostAdapter::VersionChecker).to receive(:validate_executable!)
+            new_adapter_connection
+          end
+        end
+
+        context 'when SKIP_GHOST_VERSION_CHECK is set to 1' do
+          before { ENV['SKIP_GHOST_VERSION_CHECK'] = '1' }
+
+          it 'does not validate the gh-ost executable' do
+            expect(GhostAdapter::VersionChecker).not_to receive(:validate_executable!)
+            new_adapter_connection
+          end
+        end
+
+        context 'when DRY_RUN is set to 1' do
+          before { ENV['DRY_RUN'] = '1' }
+
+          it 'sets dry_run to true' do
+            connection = new_adapter_connection
+            expect(connection.send(:dry_run)).to be true
+          end
+        end
+      end
+
+      describe 'ghost_migration_enabled? guard' do
+        before { allow(mysql_client).to receive(:abandon_results!) }
+
+        context 'when disabled' do
+          before { allow(GhostAdapter::Internal).to receive(:ghost_migration_enabled?).and_return(false) }
+
+          it '#execute delegates to the native implementation instead of gh-ost' do
+            expect(GhostAdapter::Migrator).not_to receive(:execute)
+            subject.execute("ALTER TABLE #{table} ADD INDEX index_name (bar_id)")
+          end
+
+          it '#add_index falls back to native CREATE INDEX syntax' do
+            allow(subject).to receive(:execute)
+            subject.add_index(table, column)
+            expect(subject).to have_received(:execute).with("CREATE INDEX `index_#{table}_on_#{column}` ON `#{table}` (`#{column}`)")
+          end
+
+          it '#remove_index falls back to native DROP INDEX syntax' do
+            allow(subject).to receive(:index_name_for_remove).and_return('index_name')
+            allow(subject).to receive(:execute)
+            subject.remove_index(table, column)
+            expect(subject).to have_received(:execute).with("DROP INDEX `index_name` ON `#{table}`")
+          end
+        end
+
+        context 'when enabled' do
+          before { allow(GhostAdapter::Internal).to receive(:ghost_migration_enabled?).and_return(true) }
+
+          it '#add_index still forces ALTER TABLE syntax' do
+            allow(subject).to receive(:execute)
+            subject.add_index(table, column)
+            expect(subject).to have_received(:execute).with("ALTER TABLE `#{table}` ADD INDEX `index_#{table}_on_#{column}` (`#{column}`)")
           end
         end
       end

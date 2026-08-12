@@ -36,13 +36,51 @@ module ActiveRecord
     class Mysql2GhostAdapter < Mysql2Adapter
       ADAPTER_NAME = 'mysql2_ghost'.freeze
 
-      def initialize(connection, logger, connection_options, config, dry_run: false)
-        super(connection, logger, connection_options, config)
-        @database = config[:database]
-        @dry_run = dry_run
+      if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.2')
+        def initialize(connection, logger = nil, connection_options = nil, config = nil, dry_run: false)
+          super(connection, logger, connection_options, config)
+          config = connection if connection.is_a?(Hash)
+          @database = config[:database]
+          if GhostAdapter::Internal.ghost_migration_enabled? && ENV.fetch('SKIP_GHOST_VERSION_CHECK', nil) != '1'
+            GhostAdapter::VersionChecker.validate_executable!
+          end
+          @dry_run = dry_run || ENV.fetch('DRY_RUN', nil) == '1'
+        end
+      else
+        def initialize(connection, logger, connection_options, config, dry_run: false)
+          super(connection, logger, connection_options, config)
+          @database = config[:database]
+          @dry_run = dry_run
+        end
       end
 
-      if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.0')
+      if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.2')
+        def execute(sql, name = nil, allow_retry: false)
+          return super unless GhostAdapter::Internal.ghost_migration_enabled?
+
+          # Only ALTER TABLE statements are automatically skipped by gh-ost
+          # We need to manually skip CREATE TABLE, DROP TABLE, and
+          # INSERT/DELETE (to schema migrations) for dry runs
+          return if dry_run && should_skip_for_dry_run?(sql)
+
+          if (table, query = parse_sql(sql))
+            GhostAdapter::Migrator.execute(table, query, database, dry_run)
+          else
+            super
+          end
+        end
+      elsif Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.1')
+        def execute(sql, name = nil, allow_retry: false)
+          # See comment below -- some tables need to be skipped manually for dry runs
+          return if dry_run && should_skip_for_dry_run?(sql)
+
+          if (table, query = parse_sql(sql))
+            GhostAdapter::Migrator.execute(table, query, database, dry_run)
+          else
+            super
+          end
+        end
+      elsif Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.0')
         def execute(sql, name = nil, async: false)
           # Only ALTER TABLE statements are automatically skipped by gh-ost
           # We need to manually skip CREATE TABLE, DROP TABLE, and
@@ -68,7 +106,33 @@ module ActiveRecord
         end
       end
 
-      if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('6.1')
+      if Gem.loaded_specs['activerecord'].version >= Gem::Version.new('7.2')
+        def add_index(table_name, column_name, **options)
+          return super unless GhostAdapter::Internal.ghost_migration_enabled?
+
+          index, algorithm, if_not_exists = add_index_options(table_name, column_name, **options)
+          return if if_not_exists && index_exists?(table_name, column_name, name: index.name)
+
+          index_type = index.type&.to_s&.upcase || (index.unique ? 'UNIQUE' : nil)
+
+          sql = build_add_index_sql(
+            table_name, quoted_columns(index), index.name,
+            index_type: index_type,
+            using: index.using,
+            algorithm: algorithm
+          )
+
+          execute sql
+        end
+
+        def remove_index(table_name, column_name = nil, **options)
+          return super unless GhostAdapter::Internal.ghost_migration_enabled?
+          return if options[:if_exists] && !index_exists?(table_name, column_name, **options)
+
+          index_name = index_name_for_remove(table_name, column_name, options)
+          execute "ALTER TABLE #{quote_table_name(table_name)} DROP INDEX #{quote_column_name(index_name)}"
+        end
+      elsif Gem.loaded_specs['activerecord'].version >= Gem::Version.new('6.1')
         def add_index(table_name, column_name, **options)
           index, algorithm, if_not_exists = add_index_options(table_name, column_name, **options)
           return if if_not_exists && index_exists?(table_name, column_name, name: index.name)
@@ -118,7 +182,7 @@ module ActiveRecord
       ALTER_TABLE_PATTERN = /\AALTER\s+TABLE\W*(?<table_name>\w+)\W*(?<query>.*)$/i.freeze
       QUERY_ALLOWABLE_CHARS = /[^0-9a-z_\s():'"{},`]/i.freeze
       CREATE_TABLE_PATTERN = /\Acreate\stable/i.freeze
-      DROP_TABLE_PATTERN = /\Acreate\stable/i.freeze
+      DROP_TABLE_PATTERN = /\Adrop\stable/i.freeze
       INSERT_SCHEMA_MIGRATION_PATTERN = /\Ainsert\sinto\s`schema_migrations`/i.freeze
       DROP_SCHEMA_MIGRATION_PATTERN = /\Adelete\sfrom\s`schema_migrations`/i.freeze
 
@@ -178,4 +242,12 @@ module ActiveRecord
       end
     end
   end
+end
+
+if ActiveRecord::ConnectionAdapters.respond_to?(:register)
+  ActiveRecord::ConnectionAdapters.register(
+    'mysql2_ghost',
+    'ActiveRecord::ConnectionAdapters::Mysql2GhostAdapter',
+    'active_record/connection_adapters/mysql2_ghost_adapter'
+  )
 end

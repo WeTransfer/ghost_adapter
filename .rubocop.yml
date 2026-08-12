@@ -20,7 +20,11 @@ Metrics/ClassLength:
     - 'array'
     - 'hash'
     - 'heredoc'
-  Max: 150
+  Max: 160
+
+Metrics/CyclomaticComplexity:
+  AllowedMethods:
+    - add_index
 
 Metrics/MethodLength:
   Max: 15

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.8.0
+- Fix `DROP_TABLE_PATTERN` matching `CREATE TABLE` instead of `DROP TABLE`
+- Fix `execute` passing `async:` to activerecord >= 7.1, which removed that keyword in favor of `allow_retry:`
+- Add support for ActiveRecord 7.1 and 7.2
+
 ## 0.7.0
 - Chore: add short docs for how to release the gem ([#76](https://github.com/WeTransfer/ghost_adapter/pull/76))
 - Update activerecord requirement from >= 5, <= 7.2 to >= 5, <= 8.1 ([#78](https://github.com/WeTransfer/ghost_adapter/pull/78))
