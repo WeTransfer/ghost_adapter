@@ -62,15 +62,75 @@ If you have used the rails generator, you can set the variable to a falsey value
 - "truthy" values: `[1, t, true, y, yes]`
 - "falsey" values: `[0, f, false, n, no]`
 
-### Running tests
+## Local Development
 
-To run the tests for all versions, run this script:
+This project uses [mise](https://mise.jdx.dev/) to manage Ruby versions and development tasks.
+
+### Prerequisites
+
+Install mise:
 
 ```shell
-bin/test_all_versions
+# macOS
+brew install mise
+
+# Other platforms: https://mise.jdx.dev/getting-started.html
 ```
 
-Make sure to use the appropriate Ruby version! ActiveRecord <6.0 is not compatible with Ruby 3, so specs for those versions will only run successfully in a Ruby 2 environment.
+Activate mise in your shell (add to your `~/.bashrc` or `~/.zshrc`):
+
+```shell
+eval "$(mise activate bash)"  # or zsh, fish, etc.
+```
+
+### Getting Started
+
+Once mise is installed, it will automatically install and use the correct Ruby version when you enter the project directory.
+
+Install dependencies:
+
+```shell
+mise run install
+# or
+mise run i
+```
+
+### Running Tests
+
+Run tests with the default Ruby version (3.3.10):
+
+```shell
+mise run test
+```
+
+Run tests for a specific Ruby version:
+
+```shell
+mise run test:ruby27   # Ruby 2.7.8 with ActiveRecord 5.0, 5.1, 5.2
+mise run test:ruby30   # Ruby 3.0.2 with ActiveRecord 7.0
+mise run test:ruby31   # Ruby 3.1.7 with ActiveRecord 7.0
+mise run test:ruby32   # Ruby 3.2.9 with ActiveRecord 7.0
+mise run test:ruby33   # Ruby 3.3.10 with ActiveRecord 7.0
+```
+
+Run tests for all Ruby versions:
+
+```shell
+mise run test:all
+```
+
+### Other Tasks
+
+```shell
+mise run lint      # Run rubocop with auto-correct
+mise run console   # Open console (also: mise run c)
+```
+
+View all available tasks:
+
+```shell
+mise tasks
+```
 
 ## Contributing
 
